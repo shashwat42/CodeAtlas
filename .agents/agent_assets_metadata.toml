@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "hhZY_EJ95N08WIsPXXyOJ"
+uri = "file://artifacts/code-atlas-extension/code-atlas-0.1.0.vsix"
+type = "unspecified"
+title = "Code Atlas v0.1.0 — VS Code Extension"

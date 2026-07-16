@@ -1,0 +1,523 @@
+{
+  "language": "TypeScript",
+  "version": "5.x",
+  "entries": [
+    {
+      "id": "ts.partial",
+      "name": "Partial<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type with all properties of T set to optional. Useful for update payloads and partial configuration objects.",
+      "syntax": "Partial<Type>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The type whose properties to make optional.", "optional": false }
+      ],
+      "returns": "Type with all properties optional",
+      "examples": [
+        {
+          "title": "Partial update type",
+          "code": "interface User {\n  id: number;\n  name: string;\n  email: string;\n  age: number;\n}\n\nfunction updateUser(id: number, updates: Partial<User>) {\n  // updates.name is string | undefined\n  // updates.email is string | undefined\n}\n\nupdateUser(1, { name: 'Alice' }); // Only update name"
+        },
+        {
+          "title": "Default config merging",
+          "code": "interface Config {\n  timeout: number;\n  retries: number;\n  baseUrl: string;\n}\n\nconst defaults: Config = { timeout: 5000, retries: 3, baseUrl: 'https://api.example.com' };\n\nfunction createClient(options: Partial<Config> = {}): Config {\n  return { ...defaults, ...options };\n}"
+        }
+      ],
+      "related": ["ts.required", "ts.readonly", "ts.pick", "ts.omit"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype",
+      "keywords": ["optional", "update", "patch", "config", "fields"],
+      "useCases": ["PATCH request bodies", "Optional configuration objects", "Partial updates to records"],
+      "bestPractices": ["Use for update/patch DTOs", "Combine with Required<> for validation after merge"]
+    },
+    {
+      "id": "ts.required",
+      "name": "Required<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type with all properties of T set to required (non-optional). Opposite of Partial<T>.",
+      "syntax": "Required<Type>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The type whose optional properties to make required.", "optional": false }
+      ],
+      "returns": "Type with all properties required",
+      "examples": [
+        {
+          "title": "Require all config fields",
+          "code": "interface Options {\n  timeout?: number;\n  retries?: number;\n  baseUrl?: string;\n}\n\nconst config: Required<Options> = {\n  timeout: 5000,  // Must provide all fields\n  retries: 3,\n  baseUrl: 'https://api.example.com',\n};"
+        }
+      ],
+      "related": ["ts.partial", "ts.readonly", "ts.pick"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype",
+      "keywords": ["required", "mandatory", "non-optional", "enforce"],
+      "useCases": ["Ensuring all config options are provided", "POST request bodies where all fields are mandatory"]
+    },
+    {
+      "id": "ts.readonly",
+      "name": "Readonly<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type with all properties of T set to readonly. Prevents property reassignment at the type level.",
+      "syntax": "Readonly<Type>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The type whose properties to make readonly.", "optional": false }
+      ],
+      "returns": "Type with all properties readonly",
+      "examples": [
+        {
+          "title": "Immutable state",
+          "code": "interface State {\n  count: number;\n  items: string[];\n}\n\nconst state: Readonly<State> = { count: 0, items: [] };\n// state.count = 1; // Error: Cannot assign to 'count' because it is a read-only property"
+        },
+        {
+          "title": "Readonly function parameter",
+          "code": "function processUser(user: Readonly<User>) {\n  // user.name = 'changed'; // TypeScript error\n  return user.name.toUpperCase();\n}"
+        }
+      ],
+      "related": ["ts.partial", "ts.required", "object.freeze"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype",
+      "keywords": ["immutable", "const", "readonly", "frozen"],
+      "commonMistakes": ["Readonly is shallow — nested objects and arrays are still mutable"]
+    },
+    {
+      "id": "ts.pick",
+      "name": "Pick<T, K>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type by picking a set of properties K from type T.",
+      "syntax": "Pick<Type, Keys>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The source type.", "optional": false },
+        { "name": "Keys", "type": "string literal union", "description": "Union of property names to include.", "optional": false }
+      ],
+      "returns": "New type with only specified properties",
+      "examples": [
+        {
+          "title": "Select specific fields",
+          "code": "interface User {\n  id: number;\n  name: string;\n  email: string;\n  password: string;\n  createdAt: Date;\n}\n\n// Public profile — no password\ntype PublicUser = Pick<User, 'id' | 'name' | 'email'>;\n\nfunction getProfile(user: User): PublicUser {\n  return { id: user.id, name: user.name, email: user.email };\n}"
+        }
+      ],
+      "related": ["ts.omit", "ts.partial", "ts.required"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys",
+      "keywords": ["select", "subset", "projection", "fields", "whitelist"],
+      "useCases": ["Creating view/response DTOs", "Exposing only public fields"]
+    },
+    {
+      "id": "ts.omit",
+      "name": "Omit<T, K>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type by picking all properties from T and then removing the specified keys K. The inverse of Pick<T, K>.",
+      "syntax": "Omit<Type, Keys>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The source type.", "optional": false },
+        { "name": "Keys", "type": "string literal union", "description": "Union of property names to exclude.", "optional": false }
+      ],
+      "returns": "New type without specified properties",
+      "examples": [
+        {
+          "title": "Remove sensitive fields",
+          "code": "interface User {\n  id: number;\n  name: string;\n  email: string;\n  password: string;\n}\n\ntype SafeUser = Omit<User, 'password'>;\n// { id: number; name: string; email: string }"
+        },
+        {
+          "title": "Create insert type",
+          "code": "interface Post {\n  id: number;\n  title: string;\n  content: string;\n  createdAt: Date;\n}\n\ntype NewPost = Omit<Post, 'id' | 'createdAt'>;\n// { title: string; content: string }"
+        }
+      ],
+      "related": ["ts.pick", "ts.partial", "ts.exclude"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys",
+      "keywords": ["exclude", "remove", "blacklist", "strip", "without"],
+      "useCases": ["Insert/create DTOs (without id/timestamps)", "Removing sensitive fields from response types"]
+    },
+    {
+      "id": "ts.record",
+      "name": "Record<K, V>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs an object type whose property keys are K and whose property values are V. Useful for dictionaries and lookup maps.",
+      "syntax": "Record<Keys, Type>",
+      "parameters": [
+        { "name": "Keys", "type": "string | number | symbol", "description": "The type of the keys.", "optional": false },
+        { "name": "Type", "type": "type", "description": "The type of the values.", "optional": false }
+      ],
+      "returns": "Object type with keys K and values V",
+      "examples": [
+        {
+          "title": "String-to-number map",
+          "code": "const scores: Record<string, number> = {\n  alice: 95,\n  bob: 87,\n  carol: 92,\n};"
+        },
+        {
+          "title": "Enum-keyed lookup",
+          "code": "type Status = 'pending' | 'active' | 'inactive';\n\nconst statusLabels: Record<Status, string> = {\n  pending: 'Awaiting activation',\n  active: 'Currently active',\n  inactive: 'Deactivated',\n  // TypeScript enforces all keys are present!\n};"
+        }
+      ],
+      "related": ["ts.pick", "ts.omit", "map.constructor"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type",
+      "keywords": ["dictionary", "map", "lookup", "index", "object"]
+    },
+    {
+      "id": "ts.exclude",
+      "name": "Exclude<T, U>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type by excluding from T all union members that are assignable to U.",
+      "syntax": "Exclude<UnionType, ExcludedMembers>",
+      "parameters": [
+        { "name": "UnionType", "type": "union type", "description": "The source union type.", "optional": false },
+        { "name": "ExcludedMembers", "type": "type", "description": "Types to exclude from the union.", "optional": false }
+      ],
+      "returns": "Union type with specified members excluded",
+      "examples": [
+        {
+          "title": "Exclude from union",
+          "code": "type Direction = 'left' | 'right' | 'up' | 'down';\ntype Horizontal = Exclude<Direction, 'up' | 'down'>;\n// 'left' | 'right'"
+        },
+        {
+          "title": "Remove null/undefined",
+          "code": "type MaybeString = string | null | undefined;\ntype DefiniteString = Exclude<MaybeString, null | undefined>;\n// string"
+        }
+      ],
+      "related": ["ts.extract", "ts.nonNullable", "ts.omit"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers",
+      "keywords": ["union", "remove", "filter", "exclude", "narrow"]
+    },
+    {
+      "id": "ts.extract",
+      "name": "Extract<T, U>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type by extracting from T all union members that are assignable to U. The inverse of Exclude<T, U>.",
+      "syntax": "Extract<Type, Union>",
+      "parameters": [
+        { "name": "Type", "type": "union type", "description": "The source union type.", "optional": false },
+        { "name": "Union", "type": "type", "description": "Types to keep in the union.", "optional": false }
+      ],
+      "returns": "Union type with only matching members",
+      "examples": [
+        {
+          "title": "Extract string members",
+          "code": "type Mixed = string | number | boolean | null;\ntype StringsOnly = Extract<Mixed, string>; // string"
+        }
+      ],
+      "related": ["ts.exclude", "ts.nonNullable"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union",
+      "keywords": ["union", "filter", "keep", "narrow", "extract"]
+    },
+    {
+      "id": "ts.nonNullable",
+      "name": "NonNullable<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type by excluding null and undefined from T.",
+      "syntax": "NonNullable<Type>",
+      "parameters": [
+        { "name": "Type", "type": "type", "description": "The type to make non-nullable.", "optional": false }
+      ],
+      "returns": "Type without null and undefined",
+      "examples": [
+        {
+          "title": "Remove null/undefined",
+          "code": "type MaybeUser = User | null | undefined;\ntype DefiniteUser = NonNullable<MaybeUser>; // User\n\nfunction processUser(user: NonNullable<typeof getUser>) {\n  // user is guaranteed non-null\n}"
+        }
+      ],
+      "related": ["ts.exclude", "ts.extract"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype",
+      "keywords": ["null", "undefined", "nullable", "strict", "guard"]
+    },
+    {
+      "id": "ts.returnType",
+      "name": "ReturnType<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a type consisting of the return type of function T. Useful for inferring types from function signatures.",
+      "syntax": "ReturnType<Type>",
+      "parameters": [
+        { "name": "Type", "type": "function type", "description": "The function type to extract the return type from.", "optional": false }
+      ],
+      "returns": "The return type of the function",
+      "examples": [
+        {
+          "title": "Infer return type",
+          "code": "function createUser() {\n  return { id: 1, name: 'Alice', createdAt: new Date() };\n}\n\ntype User = ReturnType<typeof createUser>;\n// { id: number; name: string; createdAt: Date }"
+        },
+        {
+          "title": "Infer async return type",
+          "code": "async function fetchUser(id: number) {\n  return await api.get<User>(`/users/${id}`);\n}\n\ntype FetchResult = Awaited<ReturnType<typeof fetchUser>>;"
+        }
+      ],
+      "related": ["ts.parameters", "ts.awaited"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype",
+      "keywords": ["infer", "return", "function", "type", "extract"]
+    },
+    {
+      "id": "ts.parameters",
+      "name": "Parameters<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Constructs a tuple type from the parameter types of a function type T.",
+      "syntax": "Parameters<Type>",
+      "parameters": [
+        { "name": "Type", "type": "function type", "description": "The function type to extract parameter types from.", "optional": false }
+      ],
+      "returns": "Tuple of parameter types",
+      "examples": [
+        {
+          "title": "Extract parameter types",
+          "code": "function createPost(title: string, content: string, authorId: number) {}\n\ntype PostParams = Parameters<typeof createPost>;\n// [title: string, content: string, authorId: number]"
+        }
+      ],
+      "related": ["ts.returnType", "ts.awaited"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype",
+      "keywords": ["parameters", "arguments", "function", "infer", "tuple"]
+    },
+    {
+      "id": "ts.awaited",
+      "name": "Awaited<T>",
+      "category": "Utility Types",
+      "language": "TypeScript",
+      "description": "Extracts the type that a Promise resolves to, recursively unwrapping nested Promises.",
+      "syntax": "Awaited<Type>",
+      "parameters": [
+        { "name": "Type", "type": "Promise<T> | T", "description": "A Promise type or any type.", "optional": false }
+      ],
+      "returns": "The resolved type",
+      "examples": [
+        {
+          "title": "Unwrap Promise type",
+          "code": "type A = Awaited<Promise<string>>; // string\ntype B = Awaited<Promise<Promise<number>>>; // number\n\nasync function fetchData(): Promise<{ id: number; name: string }> { /* ... */ }\ntype Data = Awaited<ReturnType<typeof fetchData>>;\n// { id: number; name: string }"
+        }
+      ],
+      "related": ["ts.returnType", "ts.parameters"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype",
+      "keywords": ["promise", "async", "unwrap", "resolve", "infer"],
+      "version": "4.5"
+    },
+    {
+      "id": "ts.interface",
+      "name": "interface",
+      "category": "Interfaces",
+      "language": "TypeScript",
+      "description": "Defines the shape of an object. Interfaces are open (can be extended/merged), support declaration merging, and are the recommended way to type objects in TypeScript.",
+      "syntax": "interface Name {\n  property: Type;\n  method(arg: Type): ReturnType;\n  optionalProp?: Type;\n  readonly readProp: Type;\n}",
+      "parameters": [],
+      "returns": "Type declaration",
+      "examples": [
+        {
+          "title": "Basic interface",
+          "code": "interface User {\n  id: number;\n  name: string;\n  email: string;\n  createdAt?: Date; // optional\n  readonly role: 'admin' | 'user'; // readonly\n}\n\nconst user: User = {\n  id: 1,\n  name: 'Alice',\n  email: 'alice@example.com',\n  role: 'admin',\n};"
+        },
+        {
+          "title": "Interface extension",
+          "code": "interface Animal {\n  name: string;\n  speak(): void;\n}\n\ninterface Dog extends Animal {\n  breed: string;\n  fetch(): void;\n}"
+        },
+        {
+          "title": "Function interface",
+          "code": "interface Comparator<T> {\n  (a: T, b: T): number;\n}\n\nconst byAge: Comparator<User> = (a, b) => a.age - b.age;"
+        }
+      ],
+      "related": ["ts.partial", "ts.pick", "ts.omit", "ts.generics"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/objects.html",
+      "keywords": ["interface", "shape", "contract", "object", "type", "define"],
+      "useCases": ["Defining API response shapes", "Describing function contracts", "Enforcing object structures"],
+      "bestPractices": ["Prefer interface over type alias for object shapes when declaration merging may be useful", "Use readonly for properties that should not change"]
+    },
+    {
+      "id": "ts.generics",
+      "name": "Generics",
+      "category": "Generics",
+      "language": "TypeScript",
+      "description": "Generics allow you to write reusable, type-safe code that works with any type. They are placeholders for types provided when the function, class, or interface is used.",
+      "syntax": "function identity<T>(arg: T): T { return arg; }\n\ninterface Box<T> { value: T; }\n\nclass Stack<T> { /* ... */ }\n\n// Constraints:\nfunction getProperty<T, K extends keyof T>(obj: T, key: K): T[K]",
+      "parameters": [],
+      "returns": "Typed based on provided type argument",
+      "examples": [
+        {
+          "title": "Generic function",
+          "code": "function first<T>(arr: T[]): T | undefined {\n  return arr[0];\n}\n\nconst num = first([1, 2, 3]);    // TypeScript infers: number | undefined\nconst str = first(['a', 'b']);   // string | undefined"
+        },
+        {
+          "title": "Generic with constraint",
+          "code": "function getLength<T extends { length: number }>(arg: T): number {\n  return arg.length;\n}\n\ngetLength('hello');   // 5\ngetLength([1, 2, 3]); // 3"
+        },
+        {
+          "title": "Generic API wrapper",
+          "code": "async function fetchJson<T>(url: string): Promise<T> {\n  const res = await fetch(url);\n  return res.json() as Promise<T>;\n}\n\nconst user = await fetchJson<User>('/api/users/1');"
+        }
+      ],
+      "related": ["ts.partial", "ts.record", "ts.returnType"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/generics.html",
+      "keywords": ["generic", "template", "reusable", "type parameter", "constraint", "polymorphic"]
+    },
+    {
+      "id": "ts.enum",
+      "name": "enum",
+      "category": "Enums",
+      "language": "TypeScript",
+      "description": "Enums define a set of named constants. TypeScript supports numeric (default) and string enums. Const enums are erased at compile time for better performance.",
+      "syntax": "enum Direction { Up, Down, Left, Right }\n\nconst enum Status { Active = 'ACTIVE', Inactive = 'INACTIVE' }\n\nenum Color { Red = 1, Green = 2, Blue = 4 }",
+      "parameters": [],
+      "returns": "Enum type",
+      "examples": [
+        {
+          "title": "String enum",
+          "code": "enum UserRole {\n  Admin = 'ADMIN',\n  User = 'USER',\n  Guest = 'GUEST',\n}\n\nfunction authorize(role: UserRole) {\n  if (role === UserRole.Admin) {\n    return 'Full access';\n  }\n  return 'Limited access';\n}\n\nauthorize(UserRole.Admin); // 'Full access'"
+        },
+        {
+          "title": "Const enum (inlined at compile time)",
+          "code": "const enum Direction {\n  Up = 'UP',\n  Down = 'DOWN',\n  Left = 'LEFT',\n  Right = 'RIGHT',\n}\n\nconst move = Direction.Up; // Compiled to: const move = 'UP';"
+        }
+      ],
+      "related": ["ts.record", "ts.interface"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/enums.html",
+      "keywords": ["enum", "constants", "named", "values", "variants"],
+      "bestPractices": ["Prefer const enum for better performance", "Consider string enums for better debuggability (values match names)"]
+    },
+    {
+      "id": "ts.typeAlias",
+      "name": "type (alias)",
+      "category": "Interfaces",
+      "language": "TypeScript",
+      "description": "Type aliases create a new name for any type, including primitives, unions, intersections, tuples, and complex types. More flexible than interface but does not support declaration merging.",
+      "syntax": "type Name = Type;\ntype Union = TypeA | TypeB;\ntype Intersection = TypeA & TypeB;\ntype Tuple = [string, number];",
+      "parameters": [],
+      "returns": "Type declaration",
+      "examples": [
+        {
+          "title": "Union type",
+          "code": "type Status = 'pending' | 'active' | 'cancelled';\n\ntype ID = string | number;\n\ntype Nullable<T> = T | null;\ntype MaybeUser = Nullable<User>;"
+        },
+        {
+          "title": "Intersection type",
+          "code": "type Admin = User & {\n  adminSince: Date;\n  permissions: string[];\n};"
+        },
+        {
+          "title": "Conditional type",
+          "code": "type IsString<T> = T extends string ? 'yes' : 'no';\ntype A = IsString<string>; // 'yes'\ntype B = IsString<number>; // 'no'"
+        }
+      ],
+      "related": ["ts.interface", "ts.generics", "ts.exclude"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases",
+      "keywords": ["type", "alias", "union", "intersection", "conditional"],
+      "bestPractices": ["Use interface for object shapes, type alias for everything else (unions, intersections, primitives)"]
+    },
+    {
+      "id": "ts.narrowing",
+      "name": "Type Narrowing",
+      "category": "Generics",
+      "language": "TypeScript",
+      "description": "Narrowing refines a type to a more specific subtype using control flow analysis. TypeScript understands typeof, instanceof, in operator, discriminated unions, and custom type predicates.",
+      "syntax": "// typeof guard\nif (typeof x === 'string') { /* x is string */ }\n\n// instanceof guard\nif (err instanceof TypeError) { /* err is TypeError */ }\n\n// in guard\nif ('property' in obj) { /* obj has property */ }\n\n// Type predicate\nfunction isUser(x: unknown): x is User { return typeof x === 'object' && x !== null && 'id' in x; }",
+      "parameters": [],
+      "returns": "Narrowed type within block",
+      "examples": [
+        {
+          "title": "Discriminated union",
+          "code": "type Shape =\n  | { kind: 'circle'; radius: number }\n  | { kind: 'rectangle'; width: number; height: number };\n\nfunction area(shape: Shape): number {\n  switch (shape.kind) {\n    case 'circle':\n      return Math.PI * shape.radius ** 2;\n    case 'rectangle':\n      return shape.width * shape.height;\n  }\n}"
+        },
+        {
+          "title": "Type predicate",
+          "code": "function isError(value: unknown): value is Error {\n  return value instanceof Error;\n}\n\ntry {\n  throw new Error('oops');\n} catch (err) {\n  if (isError(err)) {\n    console.error(err.message); // err is Error\n  }\n}"
+        }
+      ],
+      "related": ["ts.generics", "ts.interface", "ts.typeAlias"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+      "keywords": ["narrow", "guard", "typeof", "instanceof", "discriminated", "union", "predicate"]
+    },
+    {
+      "id": "ts.decorators",
+      "name": "Decorators",
+      "category": "Decorators",
+      "language": "TypeScript",
+      "description": "Decorators are a special kind of declaration that can be attached to a class, method, property, or parameter. They allow you to annotate and modify code at design time.",
+      "syntax": "@decorator\nclass MyClass {}\n\nfunction log(target: any, key: string, descriptor: PropertyDescriptor) { ... }",
+      "parameters": [],
+      "returns": "Modified class/method/property",
+      "examples": [
+        {
+          "title": "Class decorator",
+          "code": "function sealed(constructor: Function) {\n  Object.seal(constructor);\n  Object.seal(constructor.prototype);\n}\n\n@sealed\nclass BugReport {\n  type = 'report';\n  title: string;\n  constructor(t: string) { this.title = t; }\n}"
+        },
+        {
+          "title": "Method decorator (logging)",
+          "code": "function log(target: any, key: string, descriptor: PropertyDescriptor) {\n  const original = descriptor.value;\n  descriptor.value = function (...args: unknown[]) {\n    console.log(`Calling ${key} with`, args);\n    const result = original.apply(this, args);\n    console.log(`${key} returned`, result);\n    return result;\n  };\n  return descriptor;\n}\n\nclass Calculator {\n  @log\n  add(a: number, b: number) { return a + b; }\n}"
+        }
+      ],
+      "related": ["ts.interface", "ts.generics"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/decorators.html",
+      "keywords": ["decorator", "metadata", "annotation", "AOP", "NestJS", "Angular"],
+      "bestPractices": ["Enable experimentalDecorators and emitDecoratorMetadata in tsconfig.json"]
+    },
+    {
+      "id": "ts.modules",
+      "name": "Modules & Imports",
+      "category": "Modules",
+      "language": "TypeScript",
+      "description": "TypeScript uses ES Module syntax for organizing code. Files with import/export are treated as modules. Supports named exports, default exports, re-exports, type-only imports, and dynamic imports.",
+      "syntax": "import { name } from './module';\nimport type { Name } from './module'; // type-only\nimport * as ns from './module';\nimport defaultExport from './module';\n\nexport const value = ...;\nexport default function() {}\nexport type { MyType };\nexport { a, b } from './other';",
+      "parameters": [],
+      "returns": "Module bindings",
+      "examples": [
+        {
+          "title": "Named imports/exports",
+          "code": "// math.ts\nexport function add(a: number, b: number): number { return a + b; }\nexport function subtract(a: number, b: number): number { return a - b; }\nexport const PI = 3.14159;\n\n// main.ts\nimport { add, PI } from './math';\nconsole.log(add(1, 2)); // 3"
+        },
+        {
+          "title": "Type-only imports",
+          "code": "import type { User, Post } from './types';\nimport { type Config, createClient } from './client';\n\n// type-only imports are erased at compile time — zero runtime cost"
+        },
+        {
+          "title": "Dynamic import",
+          "code": "async function loadModule() {\n  const { heavyFunction } = await import('./heavy-module');\n  return heavyFunction();\n}"
+        }
+      ],
+      "related": ["ts.interface", "ts.typeAlias"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/modules.html",
+      "keywords": ["import", "export", "module", "ESM", "namespace", "bundle"]
+    },
+    {
+      "id": "ts.mappedTypes",
+      "name": "Mapped Types",
+      "category": "Generics",
+      "language": "TypeScript",
+      "description": "Mapped types allow you to create new types by iterating over the keys of an existing type, transforming each property.",
+      "syntax": "type Mapped = { [K in keyof T]: TransformedType };\ntype Optional = { [K in keyof T]?: T[K] };\ntype Readonly = { readonly [K in keyof T]: T[K] };",
+      "parameters": [],
+      "returns": "New mapped type",
+      "examples": [
+        {
+          "title": "Make all nullable",
+          "code": "type Nullable<T> = {\n  [K in keyof T]: T[K] | null;\n};\n\ninterface User { id: number; name: string; }\ntype NullableUser = Nullable<User>;\n// { id: number | null; name: string | null; }"
+        },
+        {
+          "title": "Getters/setters pattern",
+          "code": "type Getters<T> = {\n  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];\n};\n\ntype UserGetters = Getters<{ id: number; name: string }>;\n// { getId: () => number; getName: () => string; }"
+        }
+      ],
+      "related": ["ts.partial", "ts.readonly", "ts.record"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/mapped-types.html",
+      "keywords": ["mapped", "transform", "keyof", "iterate", "properties"]
+    },
+    {
+      "id": "ts.templateLiteral",
+      "name": "Template Literal Types",
+      "category": "Generics",
+      "language": "TypeScript",
+      "description": "Template literal types build on string literal types to produce new string types via template literal syntax.",
+      "syntax": "type Greeting = `Hello, ${string}`;\ntype EventName = `on${Capitalize<string>}`;",
+      "parameters": [],
+      "returns": "String literal type",
+      "examples": [
+        {
+          "title": "Event name types",
+          "code": "type Direction = 'top' | 'right' | 'bottom' | 'left';\ntype Padding = `padding${Capitalize<Direction>}`;\n// 'paddingTop' | 'paddingRight' | 'paddingBottom' | 'paddingLeft'"
+        },
+        {
+          "title": "CSS property types",
+          "code": "type CSSUnit = 'px' | 'em' | 'rem' | '%';\ntype CSSValue = `${number}${CSSUnit}`;\n// Type-safe CSS values"
+        }
+      ],
+      "related": ["ts.typeAlias", "ts.mappedTypes"],
+      "docs": "https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html",
+      "keywords": ["template", "literal", "string", "type", "interpolate"],
+      "version": "4.1"
+    }
+  ]
+}

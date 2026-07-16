@@ -1,0 +1,156 @@
+{
+  "name": "code-atlas",
+  "displayName": "Code Atlas",
+  "description": "A programming recipe book — browse, discover, and insert code for JavaScript, TypeScript, and Node.js APIs.",
+  "version": "0.1.0",
+  "publisher": "code-atlas",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Education"],
+  "keywords": ["javascript", "typescript", "nodejs", "documentation", "snippets", "api", "reference"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeAtlas",
+          "title": "Code Atlas",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeAtlas": [
+        {
+          "id": "codeAtlasSearch",
+          "name": "Search",
+          "type": "webview"
+        },
+        {
+          "id": "codeAtlasTree",
+          "name": "Browse",
+          "contextualTitle": "Code Atlas"
+        },
+        {
+          "id": "codeAtlasFavorites",
+          "name": "⭐ Favorites",
+          "contextualTitle": "Favorites"
+        },
+        {
+          "id": "codeAtlasHistory",
+          "name": "🕒 Recently Viewed",
+          "contextualTitle": "Recently Viewed"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeAtlas.openEntry",
+        "title": "Open Documentation",
+        "category": "Code Atlas"
+      },
+      {
+        "command": "codeAtlas.insertExample",
+        "title": "Insert Example",
+        "category": "Code Atlas"
+      },
+      {
+        "command": "codeAtlas.copyExample",
+        "title": "Copy Example",
+        "category": "Code Atlas"
+      },
+      {
+        "command": "codeAtlas.openDocs",
+        "title": "Open Official Docs",
+        "category": "Code Atlas"
+      },
+      {
+        "command": "codeAtlas.addFavorite",
+        "title": "Add to Favorites",
+        "category": "Code Atlas",
+        "icon": "$(star-empty)"
+      },
+      {
+        "command": "codeAtlas.removeFavorite",
+        "title": "Remove from Favorites",
+        "category": "Code Atlas",
+        "icon": "$(star-full)"
+      },
+      {
+        "command": "codeAtlas.clearHistory",
+        "title": "Clear Recently Viewed",
+        "category": "Code Atlas",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "codeAtlas.refresh",
+        "title": "Refresh",
+        "category": "Code Atlas",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeAtlas.refresh",
+          "when": "view == codeAtlasTree",
+          "group": "navigation"
+        },
+        {
+          "command": "codeAtlas.clearHistory",
+          "when": "view == codeAtlasHistory",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "codeAtlas.addFavorite",
+          "when": "view == codeAtlasTree && viewItem == entry && !codeAtlas:isFavorite",
+          "group": "inline"
+        },
+        {
+          "command": "codeAtlas.removeFavorite",
+          "when": "view == codeAtlasFavorites || (view == codeAtlasTree && viewItem == entry && codeAtlas:isFavorite)",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Atlas",
+      "properties": {
+        "codeAtlas.historySize": {
+          "type": "number",
+          "default": 20,
+          "description": "Maximum number of recently viewed items to remember."
+        },
+        "codeAtlas.openDocPanel": {
+          "type": "string",
+          "default": "beside",
+          "enum": ["beside", "active"],
+          "description": "Where to open documentation panels."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "package": "vsce package",
+    "vscode:prepublish": "pnpm run compile"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "~5.3.0"
+  }
+}

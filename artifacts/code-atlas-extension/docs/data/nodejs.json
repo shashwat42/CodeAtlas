@@ -1,0 +1,730 @@
+{
+  "language": "Node.js",
+  "version": "20.x",
+  "entries": [
+    {
+      "id": "fs.readFile",
+      "name": "fs.readFile()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Asynchronously reads the entire contents of a file. Returns a Buffer by default, or a string when encoding is specified.",
+      "syntax": "fs.readFile(path, callback)\nfs.readFile(path, options, callback)\n\n// Promise version (recommended)\nawait fs.promises.readFile(path, options)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL | FileHandle", "description": "File path to read.", "optional": false },
+        { "name": "options", "type": "{ encoding?: string, flag?: string } | string", "description": "Options or encoding string.", "optional": true },
+        { "name": "callback", "type": "Function", "description": "(err, data) callback. Use promises API instead when possible.", "optional": false }
+      ],
+      "returns": "void (callback) | Promise<string | Buffer>",
+      "examples": [
+        {
+          "title": "Read file as string (async/await)",
+          "code": "import { readFile } from 'node:fs/promises';\n\nconst content = await readFile('./config.json', { encoding: 'utf-8' });\nconst config = JSON.parse(content);\nconsole.log(config);"
+        },
+        {
+          "title": "Read binary file",
+          "code": "import { readFile } from 'node:fs/promises';\n\nconst buffer = await readFile('./image.png');\nconsole.log(`Size: ${buffer.length} bytes`);"
+        },
+        {
+          "title": "Callback style",
+          "code": "import fs from 'node:fs';\n\nfs.readFile('./data.txt', 'utf-8', (err, data) => {\n  if (err) throw err;\n  console.log(data);\n});"
+        }
+      ],
+      "related": ["fs.writeFile", "fs.readdir", "fs.createReadStream"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesreadfilepath-options",
+      "keywords": ["read", "file", "async", "io", "load", "open"],
+      "useCases": ["Reading config files", "Loading templates", "Processing log files"],
+      "bestPractices": ["Use fs/promises (async/await) rather than callback style", "Always specify encoding for text files to get a string instead of Buffer"]
+    },
+    {
+      "id": "fs.writeFile",
+      "name": "fs.writeFile()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Asynchronously writes data to a file, replacing the file if it already exists. Creates the file if it doesn't exist.",
+      "syntax": "await fs.promises.writeFile(path, data, options?)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL | FileHandle", "description": "File path to write.", "optional": false },
+        { "name": "data", "type": "string | Buffer | TypedArray | DataView", "description": "Content to write.", "optional": false },
+        { "name": "options", "type": "{ encoding?, flag?, mode? } | string", "description": "Optional encoding or options.", "optional": true }
+      ],
+      "returns": "Promise<void>",
+      "examples": [
+        {
+          "title": "Write text to file",
+          "code": "import { writeFile } from 'node:fs/promises';\n\nconst content = JSON.stringify({ name: 'Alice', age: 30 }, null, 2);\nawait writeFile('./output.json', content, 'utf-8');\nconsole.log('File written successfully.');"
+        },
+        {
+          "title": "Append to file",
+          "code": "import { writeFile } from 'node:fs/promises';\n\nawait writeFile('./log.txt', `${new Date().toISOString()} - Event\\n`, { flag: 'a', encoding: 'utf-8' });"
+        }
+      ],
+      "related": ["fs.readFile", "fs.appendFile", "fs.createWriteStream"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/fs.html#fspromiseswritefilefile-data-options",
+      "keywords": ["write", "save", "file", "create", "output", "persist"],
+      "commonMistakes": ["Not creating parent directories first — use mkdir with recursive:true"],
+      "bestPractices": ["Use { flag: 'a' } to append instead of overwrite", "Always await to handle errors"]
+    },
+    {
+      "id": "fs.readdir",
+      "name": "fs.readdir()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Reads the contents of a directory, returning an array of file names. Use withFileTypes: true to get Dirent objects with isFile/isDirectory methods.",
+      "syntax": "await fs.promises.readdir(path, options?)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL", "description": "Path to the directory.", "optional": false },
+        { "name": "options", "type": "{ encoding?, withFileTypes?, recursive? } | string", "description": "Options for return format.", "optional": true }
+      ],
+      "returns": "Promise<string[] | Dirent[]>",
+      "examples": [
+        {
+          "title": "List files in directory",
+          "code": "import { readdir } from 'node:fs/promises';\n\nconst files = await readdir('./src');\nconsole.log(files); // ['index.ts', 'utils.ts', 'models']"
+        },
+        {
+          "title": "List with types",
+          "code": "import { readdir } from 'node:fs/promises';\n\nconst entries = await readdir('./src', { withFileTypes: true });\nconst dirs = entries.filter(e => e.isDirectory()).map(e => e.name);\nconst files = entries.filter(e => e.isFile()).map(e => e.name);"
+        },
+        {
+          "title": "Recursive listing (Node 18.17+)",
+          "code": "const allFiles = await readdir('./src', { recursive: true });\nconsole.log(allFiles);"
+        }
+      ],
+      "related": ["fs.readFile", "fs.stat", "fs.mkdir"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesreaddirpath-options",
+      "keywords": ["directory", "list", "files", "folder", "scan"]
+    },
+    {
+      "id": "fs.mkdir",
+      "name": "fs.mkdir()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Asynchronously creates a directory. Use recursive: true to create nested directories without errors if they already exist.",
+      "syntax": "await fs.promises.mkdir(path, options?)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL", "description": "Path of the directory to create.", "optional": false },
+        { "name": "options", "type": "{ recursive?: boolean, mode?: number }", "description": "Options. Use recursive: true to create nested dirs.", "optional": true }
+      ],
+      "returns": "Promise<string | undefined>",
+      "examples": [
+        {
+          "title": "Create nested directories",
+          "code": "import { mkdir } from 'node:fs/promises';\n\nawait mkdir('./output/reports/2024', { recursive: true });\nconsole.log('Directories created.');"
+        }
+      ],
+      "related": ["fs.readdir", "fs.writeFile"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesmkdirpath-options",
+      "keywords": ["directory", "create", "folder", "mkdir", "nested"],
+      "bestPractices": ["Always use recursive: true unless you specifically need to detect existing dirs"]
+    },
+    {
+      "id": "fs.stat",
+      "name": "fs.stat()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Returns information about a file or directory (size, modification time, type). Use .isFile(), .isDirectory() to check entry type.",
+      "syntax": "await fs.promises.stat(path)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL", "description": "Path to stat.", "optional": false }
+      ],
+      "returns": "Promise<Stats>",
+      "examples": [
+        {
+          "title": "Check file size and type",
+          "code": "import { stat } from 'node:fs/promises';\n\nconst info = await stat('./package.json');\nconsole.log(info.isFile());  // true\nconsole.log(info.size);       // bytes\nconsole.log(info.mtime);      // Date of last modification"
+        },
+        {
+          "title": "Safe file exists check",
+          "code": "import { stat } from 'node:fs/promises';\n\nasync function exists(path) {\n  try {\n    await stat(path);\n    return true;\n  } catch {\n    return false;\n  }\n}"
+        }
+      ],
+      "related": ["fs.readdir", "fs.readFile"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesstatpath-options",
+      "keywords": ["stat", "info", "size", "type", "metadata", "exists"]
+    },
+    {
+      "id": "fs.createReadStream",
+      "name": "fs.createReadStream()",
+      "category": "fs",
+      "language": "Node.js",
+      "description": "Creates a readable stream for a file. Efficient for large files as it reads in chunks rather than loading the whole file into memory.",
+      "syntax": "fs.createReadStream(path, options?)",
+      "parameters": [
+        { "name": "path", "type": "string | Buffer | URL", "description": "Path to the file.", "optional": false },
+        { "name": "options", "type": "{ encoding?, start?, end?, highWaterMark? }", "description": "Stream options.", "optional": true }
+      ],
+      "returns": "ReadStream",
+      "examples": [
+        {
+          "title": "Pipe file to HTTP response",
+          "code": "import fs from 'node:fs';\nimport http from 'node:http';\n\nconst server = http.createServer((req, res) => {\n  const stream = fs.createReadStream('./large-file.txt');\n  stream.pipe(res);\n});"
+        },
+        {
+          "title": "Process CSV line by line",
+          "code": "import fs from 'node:fs';\nimport readline from 'node:readline';\n\nconst rl = readline.createInterface({\n  input: fs.createReadStream('./data.csv'),\n});\n\nfor await (const line of rl) {\n  console.log(line);\n}"
+        }
+      ],
+      "related": ["fs.readFile", "stream.pipeline", "fs.createWriteStream"],
+      "complexity": "O(1) memory — streams chunks",
+      "docs": "https://nodejs.org/api/fs.html#fscreatereadstreampath-options",
+      "keywords": ["stream", "pipe", "large file", "chunk", "efficient", "memory"]
+    },
+    {
+      "id": "path.join",
+      "name": "path.join()",
+      "category": "path",
+      "language": "Node.js",
+      "description": "Joins path segments together using the platform-specific separator, normalizing the result.",
+      "syntax": "path.join(...paths)",
+      "parameters": [
+        { "name": "paths", "type": "string", "description": "Path segments to join.", "optional": false }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Join path parts",
+          "code": "import path from 'node:path';\n\nconsole.log(path.join('/users', 'alice', 'documents', 'file.txt'));\n// '/users/alice/documents/file.txt'\n\nconsole.log(path.join('src', '..', 'lib', 'utils.js'));\n// 'lib/utils.js' (normalizes ..)"
+        },
+        {
+          "title": "Build path from __dirname",
+          "code": "import path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst __dirname = path.dirname(fileURLToPath(import.meta.url));\nconst configPath = path.join(__dirname, '..', 'config.json');"
+        }
+      ],
+      "related": ["path.resolve", "path.dirname", "path.basename"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/path.html#pathjoinpaths",
+      "keywords": ["path", "join", "combine", "directory", "file", "OS"],
+      "commonMistakes": ["Hardcoding / or \\ separators instead of using path.join — breaks cross-platform"],
+      "bestPractices": ["Always use path.join() or path.resolve() for cross-platform path construction"]
+    },
+    {
+      "id": "path.resolve",
+      "name": "path.resolve()",
+      "category": "path",
+      "language": "Node.js",
+      "description": "Resolves a sequence of paths into an absolute path, processing from right to left until an absolute path is constructed.",
+      "syntax": "path.resolve(...paths)",
+      "parameters": [
+        { "name": "paths", "type": "string", "description": "Path segments to resolve.", "optional": false }
+      ],
+      "returns": "string (absolute path)",
+      "examples": [
+        {
+          "title": "Resolve absolute path",
+          "code": "import path from 'node:path';\n\nconsole.log(path.resolve('src', 'index.ts'));\n// '/current/working/dir/src/index.ts'\n\nconsole.log(path.resolve('/root', 'src', '../lib'));\n// '/root/lib'"
+        }
+      ],
+      "related": ["path.join", "path.dirname"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/path.html#pathresolvepaths",
+      "keywords": ["absolute", "resolve", "path", "directory"]
+    },
+    {
+      "id": "path.dirname",
+      "name": "path.dirname()",
+      "category": "path",
+      "language": "Node.js",
+      "description": "Returns the directory name of a path, similar to the Unix dirname command.",
+      "syntax": "path.dirname(path)",
+      "parameters": [
+        { "name": "path", "type": "string", "description": "The path to process.", "optional": false }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Get parent directory",
+          "code": "import path from 'node:path';\n\nconsole.log(path.dirname('/usr/local/bin/node')); // '/usr/local/bin'\nconsole.log(path.dirname('./src/utils/helper.ts')); // './src/utils'"
+        },
+        {
+          "title": "ESM __dirname equivalent",
+          "code": "import { fileURLToPath } from 'node:url';\nimport path from 'node:path';\n\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);"
+        }
+      ],
+      "related": ["path.basename", "path.join", "path.resolve"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/path.html#pathdirnamepath",
+      "keywords": ["directory", "parent", "folder", "dirname"]
+    },
+    {
+      "id": "path.basename",
+      "name": "path.basename()",
+      "category": "path",
+      "language": "Node.js",
+      "description": "Returns the last portion of a path (the filename), optionally removing the extension.",
+      "syntax": "path.basename(path)\npath.basename(path, ext)",
+      "parameters": [
+        { "name": "path", "type": "string", "description": "The path to process.", "optional": false },
+        { "name": "ext", "type": "string", "description": "Optional extension to remove from the result.", "optional": true }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Get filename",
+          "code": "import path from 'node:path';\n\nconsole.log(path.basename('/usr/local/bin/node')); // 'node'\nconsole.log(path.basename('./src/index.ts'));       // 'index.ts'\nconsole.log(path.basename('./src/index.ts', '.ts')); // 'index'"
+        }
+      ],
+      "related": ["path.dirname", "path.extname"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/path.html#pathbasenamepath-ext",
+      "keywords": ["filename", "basename", "name", "file"]
+    },
+    {
+      "id": "path.extname",
+      "name": "path.extname()",
+      "category": "path",
+      "language": "Node.js",
+      "description": "Returns the file extension of a path, from the last occurrence of . to the end of the string.",
+      "syntax": "path.extname(path)",
+      "parameters": [
+        { "name": "path", "type": "string", "description": "The path to process.", "optional": false }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Get extension",
+          "code": "import path from 'node:path';\n\nconsole.log(path.extname('index.html')); // '.html'\nconsole.log(path.extname('archive.tar.gz')); // '.gz'\nconsole.log(path.extname('no-extension')); // ''"
+        }
+      ],
+      "related": ["path.basename", "path.dirname"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/path.html#pathextnamepath",
+      "keywords": ["extension", "suffix", "type", "file"]
+    },
+    {
+      "id": "crypto.createHash",
+      "name": "crypto.createHash()",
+      "category": "crypto",
+      "language": "Node.js",
+      "description": "Creates and returns a Hash object that can be used to generate fixed-size digests from data. Common algorithms: 'sha256', 'sha512', 'md5'.",
+      "syntax": "crypto.createHash(algorithm)\n  .update(data)\n  .digest(encoding)",
+      "parameters": [
+        { "name": "algorithm", "type": "string", "description": "Hash algorithm: 'sha256', 'sha512', 'md5', etc.", "optional": false }
+      ],
+      "returns": "Hash",
+      "examples": [
+        {
+          "title": "SHA-256 hash",
+          "code": "import crypto from 'node:crypto';\n\nconst hash = crypto\n  .createHash('sha256')\n  .update('Hello, World!')\n  .digest('hex');\nconsole.log(hash); // 'dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986d'"
+        },
+        {
+          "title": "Hash a file",
+          "code": "import crypto from 'node:crypto';\nimport { createReadStream } from 'node:fs';\n\nasync function hashFile(path) {\n  const hash = crypto.createHash('sha256');\n  const stream = createReadStream(path);\n  for await (const chunk of stream) hash.update(chunk);\n  return hash.digest('hex');\n}"
+        }
+      ],
+      "related": ["crypto.createHmac", "crypto.randomBytes"],
+      "complexity": "O(n) in data length",
+      "docs": "https://nodejs.org/api/crypto.html#cryptocreatehashalgorithm-options",
+      "keywords": ["hash", "sha256", "md5", "digest", "checksum", "fingerprint"],
+      "commonMistakes": ["Using MD5 for security — it is cryptographically broken. Use SHA-256 or higher."],
+      "bestPractices": ["Use SHA-256 or SHA-512 for checksums", "Use bcrypt/argon2 for passwords (not crypto.createHash)"]
+    },
+    {
+      "id": "crypto.createHmac",
+      "name": "crypto.createHmac()",
+      "category": "crypto",
+      "language": "Node.js",
+      "description": "Creates and returns an Hmac object — a keyed hash for message authentication. Used for API signatures and webhook verification.",
+      "syntax": "crypto.createHmac(algorithm, key)\n  .update(data)\n  .digest(encoding)",
+      "parameters": [
+        { "name": "algorithm", "type": "string", "description": "Hash algorithm (e.g., 'sha256').", "optional": false },
+        { "name": "key", "type": "string | Buffer | KeyObject", "description": "The secret key.", "optional": false }
+      ],
+      "returns": "Hmac",
+      "examples": [
+        {
+          "title": "Sign a message",
+          "code": "import crypto from 'node:crypto';\n\nconst secret = 'my-secret-key';\nconst message = JSON.stringify({ userId: 42, action: 'login' });\n\nconst signature = crypto\n  .createHmac('sha256', secret)\n  .update(message)\n  .digest('hex');\nconsole.log(signature);"
+        },
+        {
+          "title": "Verify webhook signature",
+          "code": "function verifyWebhook(payload, signature, secret) {\n  const expected = crypto\n    .createHmac('sha256', secret)\n    .update(payload)\n    .digest('hex');\n  return crypto.timingSafeEqual(\n    Buffer.from(signature),\n    Buffer.from(expected)\n  );\n}"
+        }
+      ],
+      "related": ["crypto.createHash", "crypto.randomBytes"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/crypto.html#cryptocreatehmacalgorithm-key-options",
+      "keywords": ["hmac", "signature", "authenticate", "webhook", "key", "mac"]
+    },
+    {
+      "id": "crypto.randomBytes",
+      "name": "crypto.randomBytes()",
+      "category": "crypto",
+      "language": "Node.js",
+      "description": "Generates cryptographically strong pseudo-random bytes. Use for tokens, salts, IDs, and secrets.",
+      "syntax": "crypto.randomBytes(size)\ncrypto.randomBytes(size, callback)",
+      "parameters": [
+        { "name": "size", "type": "number", "description": "Number of bytes to generate.", "optional": false },
+        { "name": "callback", "type": "Function", "description": "Optional async callback (err, buf).", "optional": true }
+      ],
+      "returns": "Buffer | void",
+      "examples": [
+        {
+          "title": "Generate secure token",
+          "code": "import crypto from 'node:crypto';\n\n// Synchronous\nconst token = crypto.randomBytes(32).toString('hex');\nconsole.log(token); // 64-char hex string\n\n// URL-safe base64\nconst urlToken = crypto.randomBytes(32).toString('base64url');\nconsole.log(urlToken);"
+        },
+        {
+          "title": "Generate UUID v4 equivalent",
+          "code": "import { randomUUID } from 'node:crypto';\n\nconst id = randomUUID(); // 'b3b14a25-5619-4b48-b5fb-ef1234567890'"
+        }
+      ],
+      "related": ["crypto.createHash", "crypto.createHmac"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/crypto.html#cryptorandombytessize-callback",
+      "keywords": ["random", "secure", "token", "salt", "bytes", "uuid", "nonce"]
+    },
+    {
+      "id": "process.env",
+      "name": "process.env",
+      "category": "process",
+      "language": "Node.js",
+      "description": "An object containing the user environment variables. Used to configure applications without hardcoding sensitive data like API keys, database URLs, and feature flags.",
+      "syntax": "process.env.VARIABLE_NAME\nprocess.env['VARIABLE_NAME']",
+      "parameters": [],
+      "returns": "string | undefined",
+      "examples": [
+        {
+          "title": "Access environment variables",
+          "code": "const port = process.env.PORT ?? 3000;\nconst dbUrl = process.env.DATABASE_URL;\nconst nodeEnv = process.env.NODE_ENV ?? 'development';\n\nif (!dbUrl) {\n  throw new Error('DATABASE_URL environment variable is required');\n}"
+        },
+        {
+          "title": "Feature flags",
+          "code": "const isDev = process.env.NODE_ENV === 'development';\nconst isDebug = process.env.DEBUG === 'true';\n\nif (isDev) {\n  console.log('Running in development mode');\n}"
+        }
+      ],
+      "related": ["process.exit", "process.cwd", "process.argv"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/process.html#processenv",
+      "keywords": ["environment", "config", "secrets", "variables", "env", "configuration"],
+      "bestPractices": ["Use a .env file with dotenv for local development", "Validate required env vars at startup", "Never commit secrets to version control"]
+    },
+    {
+      "id": "process.exit",
+      "name": "process.exit()",
+      "category": "process",
+      "language": "Node.js",
+      "description": "Terminates the Node.js process with the specified exit code. Exit code 0 means success; non-zero means an error occurred.",
+      "syntax": "process.exit(code?)",
+      "parameters": [
+        { "name": "code", "type": "number", "description": "Exit code. 0 = success, non-zero = error. Defaults to 0.", "optional": true }
+      ],
+      "returns": "never",
+      "examples": [
+        {
+          "title": "Exit on fatal error",
+          "code": "if (!process.env.DATABASE_URL) {\n  console.error('Fatal: DATABASE_URL is not set');\n  process.exit(1);\n}"
+        },
+        {
+          "title": "CLI tool exit codes",
+          "code": "try {\n  await runCommand();\n  process.exit(0); // success\n} catch (err) {\n  console.error(err.message);\n  process.exit(1); // failure\n}"
+        }
+      ],
+      "related": ["process.env", "process.argv"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/process.html#processexitcode",
+      "keywords": ["exit", "terminate", "quit", "kill", "shutdown"]
+    },
+    {
+      "id": "process.argv",
+      "name": "process.argv",
+      "category": "process",
+      "language": "Node.js",
+      "description": "An array containing the command-line arguments. argv[0] is 'node', argv[1] is the script path, and argv[2+] are user arguments.",
+      "syntax": "process.argv",
+      "parameters": [],
+      "returns": "string[]",
+      "examples": [
+        {
+          "title": "Parse CLI arguments",
+          "code": "// node script.js --name Alice --verbose\nconst args = process.argv.slice(2); // Remove 'node' and script path\nconsole.log(args); // ['--name', 'Alice', '--verbose']\n\n// Simple flag parsing\nconst verbose = args.includes('--verbose');\nconst nameIdx = args.indexOf('--name');\nconst name = nameIdx !== -1 ? args[nameIdx + 1] : 'World';\nconsole.log(`Hello, ${name}!`);"
+        }
+      ],
+      "related": ["process.env", "process.exit"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/process.html#processargv",
+      "keywords": ["cli", "arguments", "command line", "args", "flags", "parameters"]
+    },
+    {
+      "id": "process.cwd",
+      "name": "process.cwd()",
+      "category": "process",
+      "language": "Node.js",
+      "description": "Returns the current working directory of the Node.js process as a string.",
+      "syntax": "process.cwd()",
+      "parameters": [],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Get working directory",
+          "code": "console.log(process.cwd()); // '/home/user/my-project'\n\nimport path from 'node:path';\nconst configPath = path.join(process.cwd(), 'config.json');"
+        }
+      ],
+      "related": ["path.resolve", "process.env"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/process.html#processcwd",
+      "keywords": ["directory", "working directory", "cwd", "current"]
+    },
+    {
+      "id": "process.nextTick",
+      "name": "process.nextTick()",
+      "category": "process",
+      "language": "Node.js",
+      "description": "Schedules a callback to be called at the end of the current event loop iteration (before I/O events and timers). Higher priority than setImmediate and setTimeout.",
+      "syntax": "process.nextTick(callback, ...args)",
+      "parameters": [
+        { "name": "callback", "type": "Function", "description": "The function to call.", "optional": false },
+        { "name": "args", "type": "any", "description": "Arguments to pass to the callback.", "optional": true }
+      ],
+      "returns": "void",
+      "examples": [
+        {
+          "title": "Defer to next tick",
+          "code": "console.log('start');\nprocess.nextTick(() => console.log('next tick'));\nconsole.log('end');\n\n// Output:\n// start\n// end\n// next tick"
+        }
+      ],
+      "related": ["process.env", "events.emit"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/process.html#processnexttickcallback-args",
+      "keywords": ["async", "defer", "event loop", "microtask", "schedule"]
+    },
+    {
+      "id": "http.createServer",
+      "name": "http.createServer()",
+      "category": "http",
+      "language": "Node.js",
+      "description": "Creates a new HTTP server. The request handler receives IncomingMessage (req) and ServerResponse (res) objects.",
+      "syntax": "http.createServer(requestListener)\nhttp.createServer(options, requestListener)\n\nrequestListener(req: IncomingMessage, res: ServerResponse)",
+      "parameters": [
+        { "name": "requestListener", "type": "Function", "description": "Function called for each request with (req, res).", "optional": true }
+      ],
+      "returns": "http.Server",
+      "examples": [
+        {
+          "title": "Basic HTTP server",
+          "code": "import http from 'node:http';\n\nconst server = http.createServer((req, res) => {\n  const { method, url } = req;\n\n  if (method === 'GET' && url === '/health') {\n    res.writeHead(200, { 'Content-Type': 'application/json' });\n    res.end(JSON.stringify({ status: 'ok' }));\n    return;\n  }\n\n  res.writeHead(404);\n  res.end('Not Found');\n});\n\nserver.listen(3000, () => {\n  console.log('Server running at http://localhost:3000');\n});"
+        }
+      ],
+      "related": ["https.createServer", "events.emit"],
+      "complexity": "O(1) to create; O(1) per request",
+      "docs": "https://nodejs.org/api/http.html#httpcreateserveroptions-requestlistener",
+      "keywords": ["server", "http", "web", "request", "response", "listen"]
+    },
+    {
+      "id": "events.EventEmitter",
+      "name": "EventEmitter",
+      "category": "events",
+      "language": "Node.js",
+      "description": "The core event system in Node.js. Classes can extend EventEmitter to emit and listen to named events.",
+      "syntax": "import { EventEmitter } from 'node:events';\n\nconst emitter = new EventEmitter();\nemitter.on('event', handler);\nemitter.emit('event', ...args);\nemitter.once('event', handler);\nemitter.off('event', handler); // removeListener",
+      "parameters": [],
+      "returns": "EventEmitter instance",
+      "examples": [
+        {
+          "title": "Basic event emitter",
+          "code": "import { EventEmitter } from 'node:events';\n\nconst emitter = new EventEmitter();\n\nemitter.on('data', (payload) => {\n  console.log('Received:', payload);\n});\n\nemitter.on('error', (err) => {\n  console.error('Error:', err.message);\n});\n\nemitter.emit('data', { id: 1, name: 'Alice' });"
+        },
+        {
+          "title": "Extend EventEmitter",
+          "code": "import { EventEmitter } from 'node:events';\n\nclass DataPipeline extends EventEmitter {\n  async process(data) {\n    this.emit('start', data);\n    const result = await transform(data);\n    this.emit('done', result);\n    return result;\n  }\n}\n\nconst pipeline = new DataPipeline();\npipeline.on('done', result => console.log('Finished:', result));"
+        }
+      ],
+      "related": ["events.on", "events.emit"],
+      "complexity": "O(1) for emit",
+      "docs": "https://nodejs.org/api/events.html#class-eventemitter",
+      "keywords": ["event", "emit", "listener", "on", "pub/sub", "observer"]
+    },
+    {
+      "id": "child_process.exec",
+      "name": "child_process.exec()",
+      "category": "child_process",
+      "language": "Node.js",
+      "description": "Spawns a shell to run a command. Use for short-lived commands where you need the full output. For large outputs or streaming, use spawn().",
+      "syntax": "exec(command, callback)\nexec(command, options, callback)\n\n// Promisified\nconst { exec } = require('child_process').promises;\nawait exec(command);",
+      "parameters": [
+        { "name": "command", "type": "string", "description": "The command to run in a shell.", "optional": false },
+        { "name": "options", "type": "object", "description": "Options including cwd, env, timeout, maxBuffer.", "optional": true },
+        { "name": "callback", "type": "Function", "description": "(error, stdout, stderr) callback.", "optional": false }
+      ],
+      "returns": "ChildProcess | Promise<{stdout, stderr}>",
+      "examples": [
+        {
+          "title": "Run shell command",
+          "code": "import { exec } from 'node:child_process';\nimport { promisify } from 'node:util';\n\nconst execAsync = promisify(exec);\n\nconst { stdout } = await execAsync('git log --oneline -5');\nconsole.log(stdout);"
+        },
+        {
+          "title": "List files",
+          "code": "const { stdout } = await execAsync('ls -la', { cwd: '/usr/local' });\nconsole.log(stdout);"
+        }
+      ],
+      "related": ["child_process.spawn", "child_process.execSync"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback",
+      "keywords": ["shell", "command", "run", "execute", "subprocess", "spawn"],
+      "commonMistakes": ["Using exec with unsanitized user input — shell injection risk! Use spawn() instead"],
+      "bestPractices": ["Use spawn() when you need to pass user input safely", "Set maxBuffer option for large outputs"]
+    },
+    {
+      "id": "child_process.spawn",
+      "name": "child_process.spawn()",
+      "category": "child_process",
+      "language": "Node.js",
+      "description": "Spawns a new process with the given command. Does NOT use a shell by default, making it safe for user-provided arguments. Streams output.",
+      "syntax": "spawn(command, args?, options?)",
+      "parameters": [
+        { "name": "command", "type": "string", "description": "The command to run.", "optional": false },
+        { "name": "args", "type": "string[]", "description": "List of arguments. Each argument is passed safely — no shell injection.", "optional": true },
+        { "name": "options", "type": "object", "description": "Options: cwd, env, stdio, etc.", "optional": true }
+      ],
+      "returns": "ChildProcess",
+      "examples": [
+        {
+          "title": "Safe command with user args",
+          "code": "import { spawn } from 'node:child_process';\n\n// Safe: userInput is never passed to a shell\nconst child = spawn('git', ['log', '--oneline', userInput]);\n\nchild.stdout.on('data', (data) => console.log(data.toString()));\nchild.stderr.on('data', (data) => console.error(data.toString()));\nchild.on('close', (code) => console.log(`Exit: ${code}`));"
+        }
+      ],
+      "related": ["child_process.exec", "stream.pipeline"],
+      "complexity": "I/O bound",
+      "docs": "https://nodejs.org/api/child_process.html#child_processspawncommand-args-options",
+      "keywords": ["process", "spawn", "stream", "safe", "subprocess", "args"]
+    },
+    {
+      "id": "stream.pipeline",
+      "name": "stream.pipeline()",
+      "category": "stream",
+      "language": "Node.js",
+      "description": "Pipes streams together and handles errors and cleanup automatically. The recommended way to work with Node.js streams — it destroys all streams on error.",
+      "syntax": "import { pipeline } from 'node:stream/promises';\nawait pipeline(source, ...transforms, destination)",
+      "parameters": [
+        { "name": "streams", "type": "Stream", "description": "Source, optional transform streams, and destination.", "optional": false }
+      ],
+      "returns": "Promise<void>",
+      "examples": [
+        {
+          "title": "Compress a file",
+          "code": "import { createReadStream, createWriteStream } from 'node:fs';\nimport { createGzip } from 'node:zlib';\nimport { pipeline } from 'node:stream/promises';\n\nawait pipeline(\n  createReadStream('./input.txt'),\n  createGzip(),\n  createWriteStream('./input.txt.gz')\n);\nconsole.log('Compressed!');"
+        },
+        {
+          "title": "Fetch and save",
+          "code": "import https from 'node:https';\nimport { createWriteStream } from 'node:fs';\nimport { pipeline } from 'node:stream/promises';\n\nawait pipeline(\n  await new Promise(resolve => https.get(url, resolve)),\n  createWriteStream('./downloaded.html')\n);"
+        }
+      ],
+      "related": ["fs.createReadStream", "fs.createWriteStream", "child_process.spawn"],
+      "complexity": "O(1) memory — streams chunks",
+      "docs": "https://nodejs.org/api/stream.html#streampipelinesource-transforms-destination-callback",
+      "keywords": ["stream", "pipe", "transform", "compress", "io", "efficient"]
+    },
+    {
+      "id": "buffer.from",
+      "name": "Buffer.from()",
+      "category": "buffer",
+      "language": "Node.js",
+      "description": "Creates a new Buffer from a string, array, ArrayBuffer, or another Buffer. Used for binary data manipulation.",
+      "syntax": "Buffer.from(string, encoding?)\nBuffer.from(array)\nBuffer.from(arrayBuffer, byteOffset?, length?)\nBuffer.from(buffer)",
+      "parameters": [
+        { "name": "string", "type": "string", "description": "String to encode into a Buffer.", "optional": false },
+        { "name": "encoding", "type": "string", "description": "Character encoding: 'utf-8', 'hex', 'base64', 'ascii'. Default: 'utf-8'.", "optional": true }
+      ],
+      "returns": "Buffer",
+      "examples": [
+        {
+          "title": "Encode string",
+          "code": "const buf = Buffer.from('Hello, World!', 'utf-8');\nconsole.log(buf);               // <Buffer 48 65 6c 6c 6f ...>\nconsole.log(buf.toString());    // 'Hello, World!'\nconsole.log(buf.toString('hex')); // '48656c6c6f...' "
+        },
+        {
+          "title": "Base64 encode/decode",
+          "code": "const encoded = Buffer.from('Hello!').toString('base64');\nconsole.log(encoded); // 'SGVsbG8h'\n\nconst decoded = Buffer.from(encoded, 'base64').toString('utf-8');\nconsole.log(decoded); // 'Hello!'"
+        }
+      ],
+      "related": ["buffer.alloc", "buffer.concat", "crypto.randomBytes"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/buffer.html#static-method-bufferfromstring-encoding",
+      "keywords": ["buffer", "binary", "encode", "base64", "hex", "bytes"]
+    },
+    {
+      "id": "buffer.alloc",
+      "name": "Buffer.alloc()",
+      "category": "buffer",
+      "language": "Node.js",
+      "description": "Allocates a new Buffer of specified size, filled with zeros by default. Safe alternative to Buffer.allocUnsafe().",
+      "syntax": "Buffer.alloc(size)\nBuffer.alloc(size, fill)\nBuffer.alloc(size, fill, encoding)",
+      "parameters": [
+        { "name": "size", "type": "number", "description": "Length of the Buffer in bytes.", "optional": false },
+        { "name": "fill", "type": "string | Buffer | number", "description": "Value to fill the Buffer with. Defaults to 0.", "optional": true }
+      ],
+      "returns": "Buffer",
+      "examples": [
+        {
+          "title": "Allocate zeroed buffer",
+          "code": "const buf = Buffer.alloc(10); // 10 bytes, all zeros\nconsole.log(buf); // <Buffer 00 00 00 00 00 00 00 00 00 00>"
+        },
+        {
+          "title": "Allocate filled buffer",
+          "code": "const buf = Buffer.alloc(5, 'A');\nconsole.log(buf.toString()); // 'AAAAA'"
+        }
+      ],
+      "related": ["buffer.from", "buffer.concat"],
+      "complexity": "O(n)",
+      "docs": "https://nodejs.org/api/buffer.html#static-method-bufferallocsize-fill-encoding",
+      "keywords": ["buffer", "allocate", "memory", "bytes", "zero"]
+    },
+    {
+      "id": "timers.setTimeout",
+      "name": "setTimeout()",
+      "category": "timers",
+      "language": "Node.js",
+      "description": "Schedules a function to be called after a minimum delay (in milliseconds). Returns a Timeout handle that can be used to cancel with clearTimeout().",
+      "syntax": "setTimeout(callback, delay, ...args)\nconst timer = setTimeout(fn, ms);\nclearTimeout(timer);",
+      "parameters": [
+        { "name": "callback", "type": "Function", "description": "The function to execute after the delay.", "optional": false },
+        { "name": "delay", "type": "number", "description": "Milliseconds to wait before calling callback.", "optional": false },
+        { "name": "args", "type": "any", "description": "Arguments to pass to callback.", "optional": true }
+      ],
+      "returns": "Timeout",
+      "examples": [
+        {
+          "title": "Delay execution",
+          "code": "setTimeout(() => {\n  console.log('Runs after 1 second');\n}, 1000);"
+        },
+        {
+          "title": "Promise-based delay",
+          "code": "import { setTimeout } from 'node:timers/promises';\n\nasync function delay(ms) {\n  await setTimeout(ms);\n}\n\nawait delay(1000);\nconsole.log('One second has passed');"
+        },
+        {
+          "title": "Cancel timeout",
+          "code": "const timer = setTimeout(() => console.log('This will not run'), 5000);\nclearTimeout(timer); // Cancelled before it fires"
+        }
+      ],
+      "related": ["timers.setInterval", "timers.setImmediate", "process.nextTick"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/timers.html#settimeoutcallback-delay-args",
+      "keywords": ["timer", "delay", "schedule", "timeout", "async", "wait"]
+    },
+    {
+      "id": "timers.setInterval",
+      "name": "setInterval()",
+      "category": "timers",
+      "language": "Node.js",
+      "description": "Schedules a function to be repeatedly called with a fixed delay between each call. Returns an Interval handle.",
+      "syntax": "setInterval(callback, delay, ...args)\nconst interval = setInterval(fn, ms);\nclearInterval(interval);",
+      "parameters": [
+        { "name": "callback", "type": "Function", "description": "Function to call on each interval.", "optional": false },
+        { "name": "delay", "type": "number", "description": "Milliseconds between each call.", "optional": false }
+      ],
+      "returns": "Timeout",
+      "examples": [
+        {
+          "title": "Polling example",
+          "code": "const interval = setInterval(async () => {\n  const status = await checkStatus();\n  if (status === 'done') {\n    clearInterval(interval);\n    console.log('Task complete!');\n  }\n}, 1000);"
+        }
+      ],
+      "related": ["timers.setTimeout", "timers.setImmediate"],
+      "complexity": "O(1)",
+      "docs": "https://nodejs.org/api/timers.html#setintervalcallback-delay-args",
+      "keywords": ["interval", "repeat", "periodic", "poll", "schedule"]
+    }
+  ]
+}

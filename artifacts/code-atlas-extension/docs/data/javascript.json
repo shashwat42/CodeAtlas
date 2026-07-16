@@ -1,0 +1,1394 @@
+{
+  "language": "JavaScript",
+  "version": "ES2024",
+  "entries": [
+    {
+      "id": "array.map",
+      "name": "map()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Creates a new array populated with the results of calling a provided function on every element in the calling array. Does not mutate the original array.",
+      "syntax": "array.map(callbackFn)\narray.map(callbackFn, thisArg)\n\ncallbackFn(element, index, array)",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "A function called for each element. Receives (element, index, array).", "optional": false },
+        { "name": "thisArg", "type": "any", "description": "Value to use as 'this' when executing callbackFn.", "optional": true }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Double each number",
+          "code": "const numbers = [1, 2, 3, 4, 5];\nconst doubled = numbers.map(n => n * 2);\nconsole.log(doubled); // [2, 4, 6, 8, 10]"
+        },
+        {
+          "title": "Transform objects",
+          "code": "const users = [\n  { id: 1, name: 'Alice', age: 30 },\n  { id: 2, name: 'Bob', age: 25 },\n];\nconst names = users.map(user => user.name);\nconsole.log(names); // ['Alice', 'Bob']"
+        },
+        {
+          "title": "Use index",
+          "code": "const letters = ['a', 'b', 'c'];\nconst indexed = letters.map((letter, i) => `${i}: ${letter}`);\nconsole.log(indexed); // ['0: a', '1: b', '2: c']"
+        }
+      ],
+      "related": ["array.filter", "array.reduce", "array.flatMap", "array.forEach"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map",
+      "keywords": ["transform", "iterate", "callback", "immutable", "functional"],
+      "version": "5",
+      "browserSupport": "All modern browsers, IE9+",
+      "useCases": ["Transforming data arrays", "Converting DTOs", "Formatting display values", "Extracting specific fields"],
+      "commonMistakes": ["Forgetting that map() always returns an array of the same length", "Using map() when you need side effects — use forEach() instead", "Mutating the original array inside the callback"],
+      "bestPractices": ["Keep callbacks pure (no side effects)", "Use map() only when you need the returned array", "Prefer arrow functions for concise transformations"],
+      "performanceNotes": "O(n) — iterates every element once. For very large arrays, consider typed arrays or generator-based approaches."
+    },
+    {
+      "id": "array.filter",
+      "name": "filter()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Creates a new array with all elements that pass the test implemented by the provided function. Does not mutate the original array.",
+      "syntax": "array.filter(callbackFn)\narray.filter(callbackFn, thisArg)\n\ncallbackFn(element, index, array) → boolean",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "A predicate function. Elements that return true are kept.", "optional": false },
+        { "name": "thisArg", "type": "any", "description": "Value to use as 'this' when executing callbackFn.", "optional": true }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Filter even numbers",
+          "code": "const numbers = [1, 2, 3, 4, 5, 6];\nconst evens = numbers.filter(n => n % 2 === 0);\nconsole.log(evens); // [2, 4, 6]"
+        },
+        {
+          "title": "Filter objects by property",
+          "code": "const users = [\n  { name: 'Alice', active: true },\n  { name: 'Bob', active: false },\n  { name: 'Carol', active: true },\n];\nconst activeUsers = users.filter(u => u.active);\nconsole.log(activeUsers.map(u => u.name)); // ['Alice', 'Carol']"
+        },
+        {
+          "title": "Remove falsy values",
+          "code": "const mixed = [0, 1, '', 'hello', null, undefined, false, true];\nconst truthy = mixed.filter(Boolean);\nconsole.log(truthy); // [1, 'hello', true]"
+        }
+      ],
+      "related": ["array.map", "array.reduce", "array.find", "array.some", "array.every"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter",
+      "keywords": ["predicate", "subset", "where", "query", "search", "remove"],
+      "version": "5",
+      "browserSupport": "All modern browsers, IE9+",
+      "useCases": ["Removing items from a list", "Searching/filtering UI lists", "Extracting a subset of data", "Removing falsy/null values"],
+      "commonMistakes": ["Returning a value other than boolean (truthy/falsy still works)", "Expecting filter to mutate the original array"],
+      "bestPractices": ["Combine with map() for filter-then-transform pipelines", "Use Boolean as callback to remove all falsy values"]
+    },
+    {
+      "id": "array.reduce",
+      "name": "reduce()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Executes a user-supplied reducer callback function on each element of the array, passing in the return value from the previous call. Returns a single accumulated value.",
+      "syntax": "array.reduce(callbackFn)\narray.reduce(callbackFn, initialValue)\n\ncallbackFn(accumulator, currentValue, index, array) → newAccumulator",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Reducer function called for each element. Receives (accumulator, currentValue, index, array).", "optional": false },
+        { "name": "initialValue", "type": "any", "description": "The initial value of the accumulator. If omitted, the first element is used.", "optional": true }
+      ],
+      "returns": "any",
+      "examples": [
+        {
+          "title": "Sum an array",
+          "code": "const numbers = [1, 2, 3, 4, 5];\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\nconsole.log(sum); // 15"
+        },
+        {
+          "title": "Group by property",
+          "code": "const orders = [\n  { product: 'apple', qty: 3 },\n  { product: 'banana', qty: 5 },\n  { product: 'apple', qty: 2 },\n];\nconst grouped = orders.reduce((acc, order) => {\n  acc[order.product] = (acc[order.product] ?? 0) + order.qty;\n  return acc;\n}, {});\nconsole.log(grouped); // { apple: 5, banana: 5 }"
+        },
+        {
+          "title": "Flatten one level",
+          "code": "const nested = [[1, 2], [3, 4], [5]];\nconst flat = nested.reduce((acc, arr) => acc.concat(arr), []);\nconsole.log(flat); // [1, 2, 3, 4, 5]"
+        }
+      ],
+      "related": ["array.map", "array.filter", "array.flatMap", "array.reduceRight"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce",
+      "keywords": ["accumulate", "fold", "aggregate", "sum", "group", "collect"],
+      "version": "5",
+      "useCases": ["Summing values", "Grouping data by key", "Flattening arrays", "Building lookup maps", "Counting occurrences"],
+      "commonMistakes": ["Forgetting the initialValue when reducing to an object or array", "Not returning the accumulator from the callback", "Using reduce when map/filter is clearer"],
+      "bestPractices": ["Always provide initialValue to avoid bugs on empty arrays", "Use Object.groupBy() (ES2024) for grouping when available"]
+    },
+    {
+      "id": "array.forEach",
+      "name": "forEach()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Executes a provided function once for each array element. Unlike map(), it does not return a value. Use it for side effects.",
+      "syntax": "array.forEach(callbackFn)\narray.forEach(callbackFn, thisArg)\n\ncallbackFn(element, index, array)",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Function called for each element.", "optional": false },
+        { "name": "thisArg", "type": "any", "description": "Value to use as 'this'.", "optional": true }
+      ],
+      "returns": "undefined",
+      "examples": [
+        {
+          "title": "Log each item",
+          "code": "const fruits = ['apple', 'banana', 'cherry'];\nfruits.forEach((fruit, i) => {\n  console.log(`${i}: ${fruit}`);\n});"
+        },
+        {
+          "title": "Update DOM elements",
+          "code": "const items = document.querySelectorAll('.item');\nitems.forEach(item => item.classList.add('highlighted'));"
+        }
+      ],
+      "related": ["array.map", "array.filter", "array.for-of"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach",
+      "keywords": ["iterate", "loop", "side effect", "each"],
+      "useCases": ["DOM manipulation", "Logging", "Writing to external stores"],
+      "commonMistakes": ["Using forEach when map() is needed (expecting a return value)", "Trying to break out of forEach — use for...of instead"],
+      "bestPractices": ["Use for...of when you need break/continue", "Use map() when you need the transformed array"]
+    },
+    {
+      "id": "array.find",
+      "name": "find()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns the first element in the array that satisfies the provided testing function. Returns undefined if no element satisfies the test.",
+      "syntax": "array.find(callbackFn)\narray.find(callbackFn, thisArg)\n\ncallbackFn(element, index, array) → boolean",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Predicate function. Called for each element until it returns true.", "optional": false }
+      ],
+      "returns": "element | undefined",
+      "examples": [
+        {
+          "title": "Find by property",
+          "code": "const users = [\n  { id: 1, name: 'Alice' },\n  { id: 2, name: 'Bob' },\n];\nconst user = users.find(u => u.id === 2);\nconsole.log(user); // { id: 2, name: 'Bob' }"
+        },
+        {
+          "title": "Find first even number",
+          "code": "const numbers = [1, 3, 4, 6, 7];\nconst firstEven = numbers.find(n => n % 2 === 0);\nconsole.log(firstEven); // 4"
+        }
+      ],
+      "related": ["array.findIndex", "array.findLast", "array.filter", "array.some"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find",
+      "keywords": ["search", "lookup", "first", "match", "query"],
+      "useCases": ["Finding an item by ID", "Locating the first match in a list"],
+      "commonMistakes": ["Not handling the undefined case when no match is found"],
+      "bestPractices": ["Use optional chaining (?.) on the result to avoid errors when undefined"]
+    },
+    {
+      "id": "array.findIndex",
+      "name": "findIndex()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns the index of the first element that satisfies the testing function. Returns -1 if no element passes.",
+      "syntax": "array.findIndex(callbackFn)\ncallbackFn(element, index, array) → boolean",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Predicate that returns true for the target element.", "optional": false }
+      ],
+      "returns": "number",
+      "examples": [
+        {
+          "title": "Find index by value",
+          "code": "const fruits = ['apple', 'banana', 'cherry'];\nconst idx = fruits.findIndex(f => f === 'banana');\nconsole.log(idx); // 1"
+        }
+      ],
+      "related": ["array.find", "array.findLast", "array.indexOf"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex",
+      "keywords": ["index", "position", "search", "locate"],
+      "useCases": ["Finding position to splice/replace an element"],
+      "commonMistakes": ["Confusing -1 return with a valid index"]
+    },
+    {
+      "id": "array.findLast",
+      "name": "findLast()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns the last element that satisfies the provided testing function, iterating from right to left. Returns undefined if not found.",
+      "syntax": "array.findLast(callbackFn)",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Predicate that returns true for the target element.", "optional": false }
+      ],
+      "returns": "element | undefined",
+      "examples": [
+        {
+          "title": "Find last even",
+          "code": "const nums = [1, 2, 3, 4, 5, 6];\nconst lastEven = nums.findLast(n => n % 2 === 0);\nconsole.log(lastEven); // 6"
+        }
+      ],
+      "related": ["array.find", "array.findLastIndex"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findLast",
+      "keywords": ["search", "last", "reverse", "right"],
+      "version": "2023"
+    },
+    {
+      "id": "array.some",
+      "name": "some()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Tests whether at least one element in the array passes the test. Returns true on first match; does not iterate further.",
+      "syntax": "array.some(callbackFn)\ncallbackFn(element, index, array) → boolean",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Predicate function.", "optional": false }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Check if any negative",
+          "code": "const numbers = [1, 2, -3, 4];\nconst hasNegative = numbers.some(n => n < 0);\nconsole.log(hasNegative); // true"
+        }
+      ],
+      "related": ["array.every", "array.find", "array.filter"],
+      "complexity": "O(n) worst case, short-circuits on first match",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some",
+      "keywords": ["any", "exists", "check", "test", "includes"],
+      "useCases": ["Validation checks", "Conditional rendering", "Feature flag detection"]
+    },
+    {
+      "id": "array.every",
+      "name": "every()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Tests whether all elements in the array pass the test. Returns false and short-circuits on the first failure.",
+      "syntax": "array.every(callbackFn)\ncallbackFn(element, index, array) → boolean",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Predicate function.", "optional": false }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "All positive check",
+          "code": "const numbers = [1, 2, 3, 4, 5];\nconst allPositive = numbers.every(n => n > 0);\nconsole.log(allPositive); // true"
+        }
+      ],
+      "related": ["array.some", "array.filter"],
+      "complexity": "O(n) worst case",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every",
+      "keywords": ["all", "check", "validate", "predicate"],
+      "useCases": ["Form validation", "Checking all items meet a condition"]
+    },
+    {
+      "id": "array.sort",
+      "name": "sort()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Sorts the elements of an array in place. The default sort is by UTF-16 code units — always provide a comparator for numbers and complex objects.",
+      "syntax": "array.sort()\narray.sort(compareFn)\n\ncompareFn(a, b) → number\n  negative → a before b\n  zero → order unchanged\n  positive → b before a",
+      "parameters": [
+        { "name": "compareFn", "type": "Function", "description": "Comparison function. Should return a negative, zero, or positive number.", "optional": true }
+      ],
+      "returns": "Array (sorted in place)",
+      "examples": [
+        {
+          "title": "Sort numbers ascending",
+          "code": "const numbers = [40, 1, 5, 200];\nnumbers.sort((a, b) => a - b);\nconsole.log(numbers); // [1, 5, 40, 200]"
+        },
+        {
+          "title": "Sort strings alphabetically",
+          "code": "const fruits = ['banana', 'apple', 'cherry'];\nfruits.sort();\nconsole.log(fruits); // ['apple', 'banana', 'cherry']"
+        },
+        {
+          "title": "Sort objects by property",
+          "code": "const users = [\n  { name: 'Charlie', age: 35 },\n  { name: 'Alice', age: 25 },\n  { name: 'Bob', age: 30 },\n];\nusers.sort((a, b) => a.age - b.age);\nconsole.log(users.map(u => u.name)); // ['Alice', 'Bob', 'Charlie']"
+        }
+      ],
+      "related": ["array.toSorted", "array.reverse", "array.toReversed"],
+      "complexity": "O(n log n) typical",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort",
+      "keywords": ["order", "ascending", "descending", "alphabetical", "compare", "mutate"],
+      "commonMistakes": ["Using default sort for numbers — [10, 9, 2] sorts as ['10', '2', '9'] without compareFn", "Forgetting sort() mutates the original array — use toSorted() to avoid mutation"],
+      "bestPractices": ["Always provide a compareFn for non-string sorting", "Use toSorted() when immutability is required"]
+    },
+    {
+      "id": "array.toSorted",
+      "name": "toSorted()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns a new sorted array without modifying the original. The immutable version of sort().",
+      "syntax": "array.toSorted()\narray.toSorted(compareFn)",
+      "parameters": [
+        { "name": "compareFn", "type": "Function", "description": "Comparison function returning negative, zero, or positive.", "optional": true }
+      ],
+      "returns": "Array (new sorted copy)",
+      "examples": [
+        {
+          "title": "Non-destructive sort",
+          "code": "const original = [3, 1, 4, 1, 5];\nconst sorted = original.toSorted((a, b) => a - b);\nconsole.log(sorted);   // [1, 1, 3, 4, 5]\nconsole.log(original); // [3, 1, 4, 1, 5] — unchanged"
+        }
+      ],
+      "related": ["array.sort", "array.toReversed", "array.toSpliced", "array.with"],
+      "complexity": "O(n log n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toSorted",
+      "keywords": ["sort", "immutable", "copy", "non-destructive"],
+      "version": "2023"
+    },
+    {
+      "id": "array.slice",
+      "name": "slice()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns a shallow copy of a portion of an array. Does not modify the original.",
+      "syntax": "array.slice()\narray.slice(start)\narray.slice(start, end)",
+      "parameters": [
+        { "name": "start", "type": "number", "description": "Zero-based index to start extraction. Negative values count from end.", "optional": true },
+        { "name": "end", "type": "number", "description": "Index before which to stop. Not included. Negative values count from end.", "optional": true }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Take first three elements",
+          "code": "const arr = [1, 2, 3, 4, 5];\nconsole.log(arr.slice(0, 3)); // [1, 2, 3]"
+        },
+        {
+          "title": "Take last two elements",
+          "code": "const arr = [1, 2, 3, 4, 5];\nconsole.log(arr.slice(-2)); // [4, 5]"
+        },
+        {
+          "title": "Clone an array",
+          "code": "const original = [1, 2, 3];\nconst clone = original.slice();\nconsole.log(clone); // [1, 2, 3]"
+        }
+      ],
+      "related": ["array.splice", "array.concat", "array.at"],
+      "complexity": "O(k) where k is the size of the slice",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice",
+      "keywords": ["copy", "subset", "portion", "range", "take", "clone"]
+    },
+    {
+      "id": "array.splice",
+      "name": "splice()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Changes the contents of an array by removing, replacing, or inserting elements in place.",
+      "syntax": "array.splice(start)\narray.splice(start, deleteCount)\narray.splice(start, deleteCount, item1, item2, ...)",
+      "parameters": [
+        { "name": "start", "type": "number", "description": "Index at which to start changing the array.", "optional": false },
+        { "name": "deleteCount", "type": "number", "description": "Number of elements to remove. If 0, no elements are removed.", "optional": true },
+        { "name": "items", "type": "any", "description": "Elements to add to the array at start.", "optional": true }
+      ],
+      "returns": "Array of removed elements",
+      "examples": [
+        {
+          "title": "Remove elements",
+          "code": "const months = ['Jan', 'Feb', 'Mar', 'Apr'];\nconst removed = months.splice(1, 2);\nconsole.log(months);  // ['Jan', 'Apr']\nconsole.log(removed); // ['Feb', 'Mar']"
+        },
+        {
+          "title": "Insert elements",
+          "code": "const arr = [1, 2, 4, 5];\narr.splice(2, 0, 3); // Insert 3 at index 2\nconsole.log(arr); // [1, 2, 3, 4, 5]"
+        },
+        {
+          "title": "Replace elements",
+          "code": "const colors = ['red', 'green', 'blue'];\ncolors.splice(1, 1, 'yellow', 'orange');\nconsole.log(colors); // ['red', 'yellow', 'orange', 'blue']"
+        }
+      ],
+      "related": ["array.slice", "array.toSpliced", "array.push", "array.pop"],
+      "complexity": "O(n) in worst case due to shifting",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice",
+      "keywords": ["insert", "remove", "replace", "mutate", "delete"],
+      "commonMistakes": ["Confusing splice() (mutates) with slice() (returns copy)"],
+      "bestPractices": ["Use toSpliced() for immutable alternative (ES2023)"]
+    },
+    {
+      "id": "array.flat",
+      "name": "flat()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Creates a new array with all sub-array elements concatenated into it recursively up to the specified depth.",
+      "syntax": "array.flat()\narray.flat(depth)",
+      "parameters": [
+        { "name": "depth", "type": "number", "description": "Specifies how many levels to flatten. Defaults to 1. Use Infinity to flatten completely.", "optional": true }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Flatten one level",
+          "code": "const arr = [1, [2, 3], [4, [5, 6]]];\nconsole.log(arr.flat()); // [1, 2, 3, 4, [5, 6]]"
+        },
+        {
+          "title": "Flatten completely",
+          "code": "const deep = [1, [2, [3, [4]]]];\nconsole.log(deep.flat(Infinity)); // [1, 2, 3, 4]"
+        }
+      ],
+      "related": ["array.flatMap", "array.reduce"],
+      "complexity": "O(n) where n is total elements",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat",
+      "keywords": ["flatten", "nested", "depth", "unwrap"]
+    },
+    {
+      "id": "array.flatMap",
+      "name": "flatMap()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Maps each element using a function, then flattens the result by one level. More efficient than calling map() followed by flat(1).",
+      "syntax": "array.flatMap(callbackFn)\ncallbackFn(element, index, array) → Array | value",
+      "parameters": [
+        { "name": "callbackFn", "type": "Function", "description": "Function that returns an array or value for each element.", "optional": false }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Split words then flatten",
+          "code": "const sentences = ['hello world', 'foo bar'];\nconst words = sentences.flatMap(s => s.split(' '));\nconsole.log(words); // ['hello', 'world', 'foo', 'bar']"
+        },
+        {
+          "title": "Conditional expansion",
+          "code": "const numbers = [1, 2, 3, 4];\nconst expanded = numbers.flatMap(n => n % 2 === 0 ? [n, n] : [n]);\nconsole.log(expanded); // [1, 2, 2, 3, 4, 4]"
+        }
+      ],
+      "related": ["array.map", "array.flat", "array.reduce"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap",
+      "keywords": ["flat", "map", "flatten", "transform"]
+    },
+    {
+      "id": "array.concat",
+      "name": "concat()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns a new array formed by merging two or more arrays. Does not mutate existing arrays.",
+      "syntax": "array.concat(value1)\narray.concat(value1, value2, ...)",
+      "parameters": [
+        { "name": "values", "type": "Array | any", "description": "Arrays or values to concatenate.", "optional": false }
+      ],
+      "returns": "Array",
+      "examples": [
+        {
+          "title": "Merge two arrays",
+          "code": "const a = [1, 2, 3];\nconst b = [4, 5, 6];\nconst merged = a.concat(b);\nconsole.log(merged); // [1, 2, 3, 4, 5, 6]"
+        },
+        {
+          "title": "Spread alternative",
+          "code": "const merged = [...a, ...b]; // preferred modern approach"
+        }
+      ],
+      "related": ["array.push", "array.flat", "array.slice"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat",
+      "keywords": ["merge", "combine", "join", "append", "spread"]
+    },
+    {
+      "id": "array.includes",
+      "name": "includes()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Determines whether an array includes a certain value among its entries, returning true or false. Uses SameValueZero comparison (NaN-safe).",
+      "syntax": "array.includes(searchElement)\narray.includes(searchElement, fromIndex)",
+      "parameters": [
+        { "name": "searchElement", "type": "any", "description": "The value to search for.", "optional": false },
+        { "name": "fromIndex", "type": "number", "description": "Starting index for the search. Negative counts from end.", "optional": true }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Check membership",
+          "code": "const fruits = ['apple', 'banana', 'cherry'];\nconsole.log(fruits.includes('banana')); // true\nconsole.log(fruits.includes('grape'));  // false"
+        },
+        {
+          "title": "NaN check",
+          "code": "const arr = [1, 2, NaN];\nconsole.log(arr.includes(NaN)); // true\nconsole.log(arr.indexOf(NaN)); // -1 (indexOf fails for NaN)"
+        }
+      ],
+      "related": ["array.indexOf", "array.find", "array.some"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes",
+      "keywords": ["contains", "has", "membership", "check", "in"]
+    },
+    {
+      "id": "array.at",
+      "name": "at()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Returns the element at the given index. Accepts negative integers counting from the end of the array.",
+      "syntax": "array.at(index)",
+      "parameters": [
+        { "name": "index", "type": "number", "description": "Zero-based index. Negative values count from end: -1 is last element.", "optional": false }
+      ],
+      "returns": "element | undefined",
+      "examples": [
+        {
+          "title": "Access last element",
+          "code": "const arr = [1, 2, 3, 4, 5];\nconsole.log(arr.at(-1)); // 5\nconsole.log(arr.at(-2)); // 4"
+        }
+      ],
+      "related": ["array.slice", "array.indexOf"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at",
+      "keywords": ["index", "access", "negative", "last", "element"],
+      "version": "2022"
+    },
+    {
+      "id": "array.push",
+      "name": "push()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Adds one or more elements to the end of an array and returns the new length.",
+      "syntax": "array.push(element1)\narray.push(element1, element2, ...)",
+      "parameters": [
+        { "name": "elements", "type": "any", "description": "Elements to add to the end of the array.", "optional": false }
+      ],
+      "returns": "number (new length)",
+      "examples": [
+        {
+          "title": "Add elements",
+          "code": "const arr = [1, 2, 3];\nconst newLen = arr.push(4, 5);\nconsole.log(arr);    // [1, 2, 3, 4, 5]\nconsole.log(newLen); // 5"
+        }
+      ],
+      "related": ["array.pop", "array.unshift", "array.shift", "array.splice"],
+      "complexity": "O(1) amortized",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push",
+      "keywords": ["append", "add", "insert", "end", "mutate"]
+    },
+    {
+      "id": "array.pop",
+      "name": "pop()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Removes the last element from an array and returns it. Mutates the array.",
+      "syntax": "array.pop()",
+      "parameters": [],
+      "returns": "element | undefined",
+      "examples": [
+        {
+          "title": "Remove last item",
+          "code": "const arr = [1, 2, 3];\nconst last = arr.pop();\nconsole.log(arr);  // [1, 2]\nconsole.log(last); // 3"
+        }
+      ],
+      "related": ["array.push", "array.shift", "array.unshift"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop",
+      "keywords": ["remove", "last", "stack", "LIFO"]
+    },
+    {
+      "id": "array.join",
+      "name": "join()",
+      "category": "Array",
+      "language": "JavaScript",
+      "description": "Joins all elements of an array into a string, separated by a specified separator. null and undefined are converted to empty strings.",
+      "syntax": "array.join()\narray.join(separator)",
+      "parameters": [
+        { "name": "separator", "type": "string", "description": "String to put between elements. Defaults to comma.", "optional": true }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Join with separator",
+          "code": "const words = ['Hello', 'World'];\nconsole.log(words.join(' ')); // 'Hello World'\nconsole.log(words.join('-')); // 'Hello-World'"
+        },
+        {
+          "title": "Build path",
+          "code": "const segments = ['usr', 'local', 'bin'];\nconsole.log(segments.join('/')); // 'usr/local/bin'"
+        }
+      ],
+      "related": ["string.split", "array.toString"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join",
+      "keywords": ["concatenate", "string", "separator", "glue", "delimit"]
+    },
+    {
+      "id": "string.split",
+      "name": "split()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Divides a string into an ordered list of substrings by searching for a separator, and returns an array of these substrings.",
+      "syntax": "str.split(separator)\nstr.split(separator, limit)",
+      "parameters": [
+        { "name": "separator", "type": "string | RegExp", "description": "Pattern describing where each split should occur.", "optional": false },
+        { "name": "limit", "type": "number", "description": "Maximum number of substrings to return.", "optional": true }
+      ],
+      "returns": "string[]",
+      "examples": [
+        {
+          "title": "Split by character",
+          "code": "const str = 'a,b,c,d';\nconsole.log(str.split(',')); // ['a', 'b', 'c', 'd']"
+        },
+        {
+          "title": "Split into characters",
+          "code": "const str = 'hello';\nconsole.log(str.split('')); // ['h', 'e', 'l', 'l', 'o']"
+        },
+        {
+          "title": "Split words",
+          "code": "const sentence = 'Hello World Foo';\nconsole.log(sentence.split(' ')); // ['Hello', 'World', 'Foo']"
+        }
+      ],
+      "related": ["array.join", "string.slice", "string.match"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split",
+      "keywords": ["tokenize", "parse", "divide", "separate", "words"]
+    },
+    {
+      "id": "string.trim",
+      "name": "trim()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Removes whitespace from both ends of a string. Returns a new string without modifying the original.",
+      "syntax": "str.trim()",
+      "parameters": [],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Trim whitespace",
+          "code": "const str = '  hello world  ';\nconsole.log(str.trim()); // 'hello world'"
+        }
+      ],
+      "related": ["string.trimStart", "string.trimEnd", "string.replace"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim",
+      "keywords": ["whitespace", "spaces", "clean", "strip"]
+    },
+    {
+      "id": "string.replace",
+      "name": "replace()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Returns a new string with the first occurrence (or all occurrences with a global regex) of a pattern replaced by a replacement string or function.",
+      "syntax": "str.replace(pattern, replacement)\n\npattern: string | RegExp\nreplacement: string | Function",
+      "parameters": [
+        { "name": "pattern", "type": "string | RegExp", "description": "The substring or regex to find.", "optional": false },
+        { "name": "replacement", "type": "string | Function", "description": "Replacement string or function returning a string.", "optional": false }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Replace first occurrence",
+          "code": "const str = 'Hello World World';\nconsole.log(str.replace('World', 'JS')); // 'Hello JS World'"
+        },
+        {
+          "title": "Replace all with regex",
+          "code": "const str = 'foo bar foo';\nconsole.log(str.replace(/foo/g, 'baz')); // 'baz bar baz'"
+        },
+        {
+          "title": "Use function replacement",
+          "code": "const str = 'hello world';\nconst result = str.replace(/\\b\\w/g, c => c.toUpperCase());\nconsole.log(result); // 'Hello World'"
+        }
+      ],
+      "related": ["string.replaceAll", "string.match", "string.search"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace",
+      "keywords": ["substitute", "swap", "regex", "pattern", "transform"]
+    },
+    {
+      "id": "string.replaceAll",
+      "name": "replaceAll()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Returns a new string with all occurrences of a pattern replaced. Simpler than using a global regex with replace().",
+      "syntax": "str.replaceAll(pattern, replacement)",
+      "parameters": [
+        { "name": "pattern", "type": "string | RegExp", "description": "String or RegExp (must have global flag if regex).", "optional": false },
+        { "name": "replacement", "type": "string | Function", "description": "Replacement string or function.", "optional": false }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Replace all occurrences",
+          "code": "const str = 'cat and cat and cat';\nconsole.log(str.replaceAll('cat', 'dog')); // 'dog and dog and dog'"
+        }
+      ],
+      "related": ["string.replace", "string.split"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll",
+      "keywords": ["replace", "all", "substitute", "global"],
+      "version": "2021"
+    },
+    {
+      "id": "string.includes",
+      "name": "includes()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Determines whether one string may be found within another string. Case-sensitive.",
+      "syntax": "str.includes(searchString)\nstr.includes(searchString, position)",
+      "parameters": [
+        { "name": "searchString", "type": "string", "description": "The substring to search for.", "optional": false },
+        { "name": "position", "type": "number", "description": "Position in the string at which to begin searching. Defaults to 0.", "optional": true }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Check for substring",
+          "code": "const str = 'Hello, World!';\nconsole.log(str.includes('World')); // true\nconsole.log(str.includes('world')); // false (case-sensitive)"
+        }
+      ],
+      "related": ["string.startsWith", "string.endsWith", "string.indexOf", "string.match"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes",
+      "keywords": ["contains", "substring", "search", "find"]
+    },
+    {
+      "id": "string.startsWith",
+      "name": "startsWith()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Determines whether a string begins with the characters of a specified string. Case-sensitive.",
+      "syntax": "str.startsWith(searchString)\nstr.startsWith(searchString, position)",
+      "parameters": [
+        { "name": "searchString", "type": "string", "description": "The characters to search for at the start.", "optional": false },
+        { "name": "position", "type": "number", "description": "Position to start the search from. Defaults to 0.", "optional": true }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Check prefix",
+          "code": "const url = 'https://example.com';\nconsole.log(url.startsWith('https://')); // true\nconsole.log(url.startsWith('http://'));  // false"
+        }
+      ],
+      "related": ["string.endsWith", "string.includes"],
+      "complexity": "O(k) where k is searchString length",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith",
+      "keywords": ["prefix", "begins", "check", "url", "path"]
+    },
+    {
+      "id": "string.endsWith",
+      "name": "endsWith()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Determines whether a string ends with the characters of a specified string.",
+      "syntax": "str.endsWith(searchString)\nstr.endsWith(searchString, endPosition)",
+      "parameters": [
+        { "name": "searchString", "type": "string", "description": "The characters to search for at the end.", "optional": false },
+        { "name": "endPosition", "type": "number", "description": "The length of the string to search. Defaults to str.length.", "optional": true }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Check file extension",
+          "code": "const filename = 'photo.png';\nconsole.log(filename.endsWith('.png')); // true\nconsole.log(filename.endsWith('.jpg')); // false"
+        }
+      ],
+      "related": ["string.startsWith", "string.includes"],
+      "complexity": "O(k)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith",
+      "keywords": ["suffix", "extension", "ends", "check"]
+    },
+    {
+      "id": "string.padStart",
+      "name": "padStart()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Pads the current string with another string (repeated if needed) to reach a given length, from the start of the string.",
+      "syntax": "str.padStart(targetLength)\nstr.padStart(targetLength, padString)",
+      "parameters": [
+        { "name": "targetLength", "type": "number", "description": "The length of the resulting string.", "optional": false },
+        { "name": "padString", "type": "string", "description": "String to pad with. Defaults to space.", "optional": true }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Zero-pad numbers",
+          "code": "const num = '5';\nconsole.log(num.padStart(3, '0')); // '005'"
+        },
+        {
+          "title": "Format time",
+          "code": "const hours = String(9).padStart(2, '0');\nconst mins = String(5).padStart(2, '0');\nconsole.log(`${hours}:${mins}`); // '09:05'"
+        }
+      ],
+      "related": ["string.padEnd", "string.repeat"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart",
+      "keywords": ["pad", "zero", "leading", "format", "align"]
+    },
+    {
+      "id": "string.slice",
+      "name": "slice()",
+      "category": "String",
+      "language": "JavaScript",
+      "description": "Extracts a section of a string and returns it as a new string. Negative indices count from the end.",
+      "syntax": "str.slice(beginIndex)\nstr.slice(beginIndex, endIndex)",
+      "parameters": [
+        { "name": "beginIndex", "type": "number", "description": "Zero-based index to begin extraction. Negative counts from end.", "optional": false },
+        { "name": "endIndex", "type": "number", "description": "Index before which to end. Not included. Negative counts from end.", "optional": true }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Extract substring",
+          "code": "const str = 'Hello, World!';\nconsole.log(str.slice(7, 12)); // 'World'\nconsole.log(str.slice(-6, -1)); // 'World'"
+        }
+      ],
+      "related": ["string.substring", "string.split", "string.at"],
+      "complexity": "O(k)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/slice",
+      "keywords": ["extract", "substring", "range", "portion"]
+    },
+    {
+      "id": "object.keys",
+      "name": "Object.keys()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Returns an array of a given object's own enumerable string-keyed property names.",
+      "syntax": "Object.keys(obj)",
+      "parameters": [
+        { "name": "obj", "type": "object", "description": "The object whose enumerable own properties are to be returned.", "optional": false }
+      ],
+      "returns": "string[]",
+      "examples": [
+        {
+          "title": "Get property names",
+          "code": "const user = { name: 'Alice', age: 30, active: true };\nconsole.log(Object.keys(user)); // ['name', 'age', 'active']"
+        },
+        {
+          "title": "Iterate over properties",
+          "code": "const config = { host: 'localhost', port: 3000 };\nObject.keys(config).forEach(key => {\n  console.log(`${key}: ${config[key]}`);\n});"
+        }
+      ],
+      "related": ["object.values", "object.entries", "object.assign"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys",
+      "keywords": ["properties", "iterate", "loop", "enumerate", "keys"]
+    },
+    {
+      "id": "object.values",
+      "name": "Object.values()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Returns an array of a given object's own enumerable string-keyed property values.",
+      "syntax": "Object.values(obj)",
+      "parameters": [
+        { "name": "obj", "type": "object", "description": "The object whose enumerable own property values are to be returned.", "optional": false }
+      ],
+      "returns": "any[]",
+      "examples": [
+        {
+          "title": "Get all values",
+          "code": "const scores = { alice: 95, bob: 87, carol: 92 };\nconsole.log(Object.values(scores)); // [95, 87, 92]\nconst total = Object.values(scores).reduce((a, b) => a + b, 0);\nconsole.log(total); // 274"
+        }
+      ],
+      "related": ["object.keys", "object.entries"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values",
+      "keywords": ["values", "properties", "enumerate"]
+    },
+    {
+      "id": "object.entries",
+      "name": "Object.entries()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Returns an array of a given object's own enumerable string-keyed [key, value] pairs.",
+      "syntax": "Object.entries(obj)",
+      "parameters": [
+        { "name": "obj", "type": "object", "description": "The object whose entries are to be returned.", "optional": false }
+      ],
+      "returns": "[string, any][]",
+      "examples": [
+        {
+          "title": "Iterate key-value pairs",
+          "code": "const user = { name: 'Alice', role: 'admin' };\nfor (const [key, value] of Object.entries(user)) {\n  console.log(`${key}: ${value}`);\n}\n// name: Alice\n// role: admin"
+        },
+        {
+          "title": "Convert to Map",
+          "code": "const obj = { a: 1, b: 2, c: 3 };\nconst map = new Map(Object.entries(obj));\nconsole.log(map.get('a')); // 1"
+        }
+      ],
+      "related": ["object.keys", "object.values", "object.fromEntries"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries",
+      "keywords": ["pairs", "iterate", "key-value", "destructure"]
+    },
+    {
+      "id": "object.assign",
+      "name": "Object.assign()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Copies all enumerable own properties from one or more source objects to a target object. Returns the modified target.",
+      "syntax": "Object.assign(target, ...sources)",
+      "parameters": [
+        { "name": "target", "type": "object", "description": "The target object to copy into. It is modified and returned.", "optional": false },
+        { "name": "sources", "type": "object", "description": "Source objects to copy properties from.", "optional": false }
+      ],
+      "returns": "object (target)",
+      "examples": [
+        {
+          "title": "Merge objects",
+          "code": "const defaults = { color: 'red', size: 'medium' };\nconst options = { size: 'large', weight: 'heavy' };\nconst merged = Object.assign({}, defaults, options);\nconsole.log(merged); // { color: 'red', size: 'large', weight: 'heavy' }"
+        },
+        {
+          "title": "Shallow clone",
+          "code": "const original = { a: 1, b: 2 };\nconst clone = Object.assign({}, original);\nclone.a = 99;\nconsole.log(original.a); // 1 — unchanged"
+        }
+      ],
+      "related": ["object.entries", "object.keys", "object.freeze"],
+      "complexity": "O(n) where n is total properties",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign",
+      "keywords": ["merge", "copy", "clone", "mixin", "extend", "spread"],
+      "commonMistakes": ["Shallow copy only — nested objects are still shared by reference", "Overwriting the target — use {} as first argument to avoid mutation"],
+      "bestPractices": ["Prefer spread syntax {...a, ...b} for a more declarative approach"]
+    },
+    {
+      "id": "object.freeze",
+      "name": "Object.freeze()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Freezes an object, making it immutable: new properties cannot be added, existing properties cannot be removed or reconfigured, and their values cannot be changed.",
+      "syntax": "Object.freeze(obj)",
+      "parameters": [
+        { "name": "obj", "type": "object", "description": "The object to freeze.", "optional": false }
+      ],
+      "returns": "object (the frozen object)",
+      "examples": [
+        {
+          "title": "Immutable config",
+          "code": "const config = Object.freeze({\n  API_URL: 'https://api.example.com',\n  TIMEOUT: 5000,\n});\nconfig.API_URL = 'something else'; // Silently fails (throws in strict mode)\nconsole.log(config.API_URL); // 'https://api.example.com'"
+        }
+      ],
+      "related": ["object.assign", "object.create"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze",
+      "keywords": ["immutable", "const", "lock", "protect", "seal"],
+      "commonMistakes": ["freeze() is shallow — nested objects are still mutable", "Expecting errors without strict mode — fails silently otherwise"]
+    },
+    {
+      "id": "object.fromEntries",
+      "name": "Object.fromEntries()",
+      "category": "Objects",
+      "language": "JavaScript",
+      "description": "Transforms a list of key-value pairs into an object. Inverse of Object.entries().",
+      "syntax": "Object.fromEntries(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable", "description": "An iterable (e.g. Array or Map) of [key, value] pairs.", "optional": false }
+      ],
+      "returns": "object",
+      "examples": [
+        {
+          "title": "From entries array",
+          "code": "const entries = [['a', 1], ['b', 2], ['c', 3]];\nconst obj = Object.fromEntries(entries);\nconsole.log(obj); // { a: 1, b: 2, c: 3 }"
+        },
+        {
+          "title": "Transform object values",
+          "code": "const prices = { apple: 1.5, banana: 0.75 };\nconst doubled = Object.fromEntries(\n  Object.entries(prices).map(([k, v]) => [k, v * 2])\n);\nconsole.log(doubled); // { apple: 3, banana: 1.5 }"
+        }
+      ],
+      "related": ["object.entries", "map.entries"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries",
+      "keywords": ["create", "transform", "map", "convert", "entries"],
+      "version": "2019"
+    },
+    {
+      "id": "promise.all",
+      "name": "Promise.all()",
+      "category": "Promise",
+      "language": "JavaScript",
+      "description": "Takes an iterable of promises and returns a new promise that resolves when all input promises resolve, with an array of all resolved values. Rejects immediately if any input promise rejects.",
+      "syntax": "Promise.all(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable<Promise>", "description": "An iterable (e.g. Array) of promises.", "optional": false }
+      ],
+      "returns": "Promise<any[]>",
+      "examples": [
+        {
+          "title": "Parallel API calls",
+          "code": "const [users, posts, comments] = await Promise.all([\n  fetch('/api/users').then(r => r.json()),\n  fetch('/api/posts').then(r => r.json()),\n  fetch('/api/comments').then(r => r.json()),\n]);\nconsole.log(users, posts, comments);"
+        },
+        {
+          "title": "Process results",
+          "code": "const promises = [1, 2, 3].map(id => fetchUser(id));\nconst users = await Promise.all(promises);\nconsole.log(users); // Array of resolved user objects"
+        }
+      ],
+      "related": ["promise.allSettled", "promise.race", "promise.any"],
+      "complexity": "O(n) parallel",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all",
+      "keywords": ["parallel", "concurrent", "async", "await", "batch"],
+      "useCases": ["Parallel API requests", "Waiting for multiple async operations", "Batch processing"],
+      "commonMistakes": ["Using Promise.all when one failure should not cancel others — use Promise.allSettled instead"],
+      "bestPractices": ["Use for independent parallel operations where all must succeed", "Use Promise.allSettled when partial results are acceptable"]
+    },
+    {
+      "id": "promise.allSettled",
+      "name": "Promise.allSettled()",
+      "category": "Promise",
+      "language": "JavaScript",
+      "description": "Returns a promise that resolves after all given promises settle (either fulfill or reject). Returns an array of objects describing the outcome of each promise.",
+      "syntax": "Promise.allSettled(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable<Promise>", "description": "Iterable of promises.", "optional": false }
+      ],
+      "returns": "Promise<{status: 'fulfilled'|'rejected', value?: any, reason?: any}[]>",
+      "examples": [
+        {
+          "title": "Handle partial failures",
+          "code": "const results = await Promise.allSettled([\n  fetch('/api/users'),\n  fetch('/api/broken-endpoint'),\n  fetch('/api/posts'),\n]);\nresults.forEach(result => {\n  if (result.status === 'fulfilled') {\n    console.log('Success:', result.value);\n  } else {\n    console.error('Failed:', result.reason);\n  }\n});"
+        }
+      ],
+      "related": ["promise.all", "promise.race", "promise.any"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled",
+      "keywords": ["parallel", "settled", "fulfilled", "rejected", "batch", "tolerant"],
+      "version": "2020"
+    },
+    {
+      "id": "promise.race",
+      "name": "Promise.race()",
+      "category": "Promise",
+      "language": "JavaScript",
+      "description": "Returns a promise that settles with the outcome of the first input promise to settle (whether fulfilled or rejected).",
+      "syntax": "Promise.race(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable<Promise>", "description": "Iterable of promises.", "optional": false }
+      ],
+      "returns": "Promise<any>",
+      "examples": [
+        {
+          "title": "Timeout pattern",
+          "code": "function withTimeout(promise, ms) {\n  const timeout = new Promise((_, reject) =>\n    setTimeout(() => reject(new Error('Timeout')), ms)\n  );\n  return Promise.race([promise, timeout]);\n}\n\nconst result = await withTimeout(fetch('/api/data'), 5000);"
+        }
+      ],
+      "related": ["promise.all", "promise.any", "promise.allSettled"],
+      "complexity": "O(1) — resolves on first",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race",
+      "keywords": ["timeout", "first", "fastest", "race", "competition"]
+    },
+    {
+      "id": "promise.any",
+      "name": "Promise.any()",
+      "category": "Promise",
+      "language": "JavaScript",
+      "description": "Takes an iterable of promises. Returns a promise that fulfills when any of the input promises fulfills. Rejects with an AggregateError only if all promises reject.",
+      "syntax": "Promise.any(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable<Promise>", "description": "Iterable of promises.", "optional": false }
+      ],
+      "returns": "Promise<any>",
+      "examples": [
+        {
+          "title": "First successful fetch",
+          "code": "const data = await Promise.any([\n  fetch('https://cdn1.example.com/data'),\n  fetch('https://cdn2.example.com/data'),\n  fetch('https://cdn3.example.com/data'),\n]);\nconsole.log(data); // First successful response"
+        }
+      ],
+      "related": ["promise.race", "promise.all", "promise.allSettled"],
+      "complexity": "O(1) — resolves on first success",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any",
+      "keywords": ["first", "success", "fallback", "cdn", "resilient"],
+      "version": "2021"
+    },
+    {
+      "id": "json.parse",
+      "name": "JSON.parse()",
+      "category": "JSON",
+      "language": "JavaScript",
+      "description": "Parses a JSON string and returns the JavaScript value described by the string.",
+      "syntax": "JSON.parse(text)\nJSON.parse(text, reviver)",
+      "parameters": [
+        { "name": "text", "type": "string", "description": "The JSON string to parse.", "optional": false },
+        { "name": "reviver", "type": "Function", "description": "Optional function to transform parsed values.", "optional": true }
+      ],
+      "returns": "any",
+      "examples": [
+        {
+          "title": "Parse JSON string",
+          "code": "const json = '{\"name\":\"Alice\",\"age\":30}';\nconst obj = JSON.parse(json);\nconsole.log(obj.name); // 'Alice'\nconsole.log(obj.age);  // 30"
+        },
+        {
+          "title": "Safe parse with try/catch",
+          "code": "function safeParse(json) {\n  try {\n    return { data: JSON.parse(json), error: null };\n  } catch (e) {\n    return { data: null, error: e };\n  }\n}"
+        }
+      ],
+      "related": ["json.stringify"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse",
+      "keywords": ["deserialize", "decode", "parse", "convert"],
+      "commonMistakes": ["Not wrapping in try/catch — invalid JSON throws SyntaxError"],
+      "bestPractices": ["Always validate/parse with try/catch when input is external"]
+    },
+    {
+      "id": "json.stringify",
+      "name": "JSON.stringify()",
+      "category": "JSON",
+      "language": "JavaScript",
+      "description": "Converts a JavaScript value to a JSON string. Undefined, function, and symbol values are omitted from the output.",
+      "syntax": "JSON.stringify(value)\nJSON.stringify(value, replacer)\nJSON.stringify(value, replacer, space)",
+      "parameters": [
+        { "name": "value", "type": "any", "description": "The value to serialize.", "optional": false },
+        { "name": "replacer", "type": "Function | string[] | null", "description": "Array of allowed keys or transform function.", "optional": true },
+        { "name": "space", "type": "number | string", "description": "Spaces for indentation in the output string.", "optional": true }
+      ],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Serialize to JSON",
+          "code": "const user = { name: 'Alice', age: 30 };\nconsole.log(JSON.stringify(user)); // '{\"name\":\"Alice\",\"age\":30}'"
+        },
+        {
+          "title": "Pretty print",
+          "code": "const data = { name: 'Alice', roles: ['admin', 'user'] };\nconsole.log(JSON.stringify(data, null, 2));\n// {\n//   \"name\": \"Alice\",\n//   \"roles\": [\"admin\", \"user\"]\n// }"
+        }
+      ],
+      "related": ["json.parse"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify",
+      "keywords": ["serialize", "encode", "convert", "print", "format"]
+    },
+    {
+      "id": "math.max",
+      "name": "Math.max()",
+      "category": "Math",
+      "language": "JavaScript",
+      "description": "Returns the largest of zero or more numbers. Returns -Infinity when called with no arguments.",
+      "syntax": "Math.max(value1, value2, ...)",
+      "parameters": [
+        { "name": "values", "type": "number", "description": "Numbers to compare.", "optional": true }
+      ],
+      "returns": "number",
+      "examples": [
+        {
+          "title": "Find maximum",
+          "code": "console.log(Math.max(1, 3, 2)); // 3\nconsole.log(Math.max(-5, -2, -8)); // -2"
+        },
+        {
+          "title": "Max from array",
+          "code": "const numbers = [4, 2, 9, 1, 7];\nconsole.log(Math.max(...numbers)); // 9"
+        }
+      ],
+      "related": ["math.min", "array.reduce"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max",
+      "keywords": ["maximum", "largest", "greatest", "compare"]
+    },
+    {
+      "id": "math.min",
+      "name": "Math.min()",
+      "category": "Math",
+      "language": "JavaScript",
+      "description": "Returns the smallest of zero or more numbers.",
+      "syntax": "Math.min(value1, value2, ...)",
+      "parameters": [
+        { "name": "values", "type": "number", "description": "Numbers to compare.", "optional": true }
+      ],
+      "returns": "number",
+      "examples": [
+        {
+          "title": "Find minimum",
+          "code": "console.log(Math.min(1, 3, 2)); // 1\nconst nums = [4, 2, 9, 1];\nconsole.log(Math.min(...nums)); // 1"
+        }
+      ],
+      "related": ["math.max"],
+      "complexity": "O(n)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min",
+      "keywords": ["minimum", "smallest", "least"]
+    },
+    {
+      "id": "math.floor",
+      "name": "Math.floor()",
+      "category": "Math",
+      "language": "JavaScript",
+      "description": "Returns the largest integer less than or equal to a given number (rounds down).",
+      "syntax": "Math.floor(x)",
+      "parameters": [{ "name": "x", "type": "number", "description": "A number.", "optional": false }],
+      "returns": "number",
+      "examples": [
+        {
+          "title": "Round down",
+          "code": "console.log(Math.floor(4.7)); // 4\nconsole.log(Math.floor(-4.7)); // -5\nconsole.log(Math.floor(Math.random() * 10)); // Random 0-9"
+        }
+      ],
+      "related": ["math.ceil", "math.round", "math.trunc"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor",
+      "keywords": ["round", "integer", "truncate", "floor"]
+    },
+    {
+      "id": "math.random",
+      "name": "Math.random()",
+      "category": "Math",
+      "language": "JavaScript",
+      "description": "Returns a floating-point pseudo-random number in the range [0, 1). Not cryptographically secure — use crypto.getRandomValues() for security.",
+      "syntax": "Math.random()",
+      "parameters": [],
+      "returns": "number (0 ≤ x < 1)",
+      "examples": [
+        {
+          "title": "Random integer in range",
+          "code": "// Random integer from min (inclusive) to max (exclusive)\nfunction randomInt(min, max) {\n  return Math.floor(Math.random() * (max - min)) + min;\n}\nconsole.log(randomInt(1, 7)); // Random 1-6 (dice)"
+        }
+      ],
+      "related": ["math.floor", "math.ceil"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random",
+      "keywords": ["random", "chance", "dice", "shuffle", "pseudorandom"],
+      "commonMistakes": ["Using Math.random() for cryptographic or security purposes — use crypto.getRandomValues() instead"]
+    },
+    {
+      "id": "map.constructor",
+      "name": "new Map()",
+      "category": "Map",
+      "language": "JavaScript",
+      "description": "Creates a new Map object that holds key-value pairs. Keys can be any type. Maintains insertion order. More performant than objects for frequent additions/deletions.",
+      "syntax": "new Map()\nnew Map(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable", "description": "An iterable of [key, value] pairs. Optional.", "optional": true }
+      ],
+      "returns": "Map",
+      "examples": [
+        {
+          "title": "Basic Map usage",
+          "code": "const map = new Map();\nmap.set('name', 'Alice');\nmap.set(42, 'the answer');\nconsole.log(map.get('name')); // 'Alice'\nconsole.log(map.size);        // 2"
+        },
+        {
+          "title": "Map from object entries",
+          "code": "const obj = { a: 1, b: 2, c: 3 };\nconst map = new Map(Object.entries(obj));\nconsole.log(map.get('b')); // 2"
+        }
+      ],
+      "related": ["map.set", "map.get", "map.has", "set.constructor", "object.entries"],
+      "complexity": "O(1) average for get/set/has",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+      "keywords": ["dictionary", "key-value", "lookup", "hash", "collection"]
+    },
+    {
+      "id": "map.set",
+      "name": "Map.set()",
+      "category": "Map",
+      "language": "JavaScript",
+      "description": "Adds or updates an entry in a Map with the specified key and value. Returns the Map itself (chainable).",
+      "syntax": "map.set(key, value)",
+      "parameters": [
+        { "name": "key", "type": "any", "description": "The key to set. Can be any value.", "optional": false },
+        { "name": "value", "type": "any", "description": "The value to set.", "optional": false }
+      ],
+      "returns": "Map (the same map)",
+      "examples": [
+        {
+          "title": "Set and chain",
+          "code": "const map = new Map()\n  .set('a', 1)\n  .set('b', 2)\n  .set('c', 3);\nconsole.log(map.size); // 3"
+        }
+      ],
+      "related": ["map.get", "map.has", "map.delete", "map.constructor"],
+      "complexity": "O(1) average",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set",
+      "keywords": ["add", "update", "insert", "key", "value"]
+    },
+    {
+      "id": "map.get",
+      "name": "Map.get()",
+      "category": "Map",
+      "language": "JavaScript",
+      "description": "Returns the value associated with the specified key, or undefined if the key doesn't exist.",
+      "syntax": "map.get(key)",
+      "parameters": [
+        { "name": "key", "type": "any", "description": "The key to look up.", "optional": false }
+      ],
+      "returns": "any | undefined",
+      "examples": [
+        {
+          "title": "Look up a value",
+          "code": "const map = new Map([['a', 1], ['b', 2]]);\nconsole.log(map.get('a')); // 1\nconsole.log(map.get('x')); // undefined"
+        }
+      ],
+      "related": ["map.set", "map.has", "map.constructor"],
+      "complexity": "O(1) average",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/get",
+      "keywords": ["lookup", "retrieve", "find", "key"]
+    },
+    {
+      "id": "set.constructor",
+      "name": "new Set()",
+      "category": "Set",
+      "language": "JavaScript",
+      "description": "Creates a Set — a collection of unique values. Any type can be stored. Adding a duplicate has no effect.",
+      "syntax": "new Set()\nnew Set(iterable)",
+      "parameters": [
+        { "name": "iterable", "type": "Iterable", "description": "An iterable of values to initialize the Set with.", "optional": true }
+      ],
+      "returns": "Set",
+      "examples": [
+        {
+          "title": "Deduplicate an array",
+          "code": "const arr = [1, 2, 2, 3, 3, 3, 4];\nconst unique = [...new Set(arr)];\nconsole.log(unique); // [1, 2, 3, 4]"
+        },
+        {
+          "title": "Set operations",
+          "code": "const a = new Set([1, 2, 3, 4]);\nconst b = new Set([3, 4, 5, 6]);\n\n// Union\nconst union = new Set([...a, ...b]);\n// Intersection\nconst intersect = new Set([...a].filter(x => b.has(x)));\n// Difference\nconst diff = new Set([...a].filter(x => !b.has(x)));"
+        }
+      ],
+      "related": ["set.add", "set.has", "set.delete", "map.constructor"],
+      "complexity": "O(1) average for add/has/delete",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+      "keywords": ["unique", "deduplicate", "collection", "distinct"],
+      "useCases": ["Removing duplicates", "Membership testing", "Set theory operations (union, intersection, difference)"]
+    },
+    {
+      "id": "date.now",
+      "name": "Date.now()",
+      "category": "Date",
+      "language": "JavaScript",
+      "description": "Returns the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC (Unix Epoch).",
+      "syntax": "Date.now()",
+      "parameters": [],
+      "returns": "number (milliseconds)",
+      "examples": [
+        {
+          "title": "Measure execution time",
+          "code": "const start = Date.now();\n// ... some work ...\nconst elapsed = Date.now() - start;\nconsole.log(`Took ${elapsed}ms`);"
+        }
+      ],
+      "related": ["date.constructor", "date.getTime"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now",
+      "keywords": ["timestamp", "unix", "epoch", "time", "milliseconds", "performance"]
+    },
+    {
+      "id": "date.toISOString",
+      "name": "Date.toISOString()",
+      "category": "Date",
+      "language": "JavaScript",
+      "description": "Returns a string in ISO 8601 format: YYYY-MM-DDTHH:mm:ss.sssZ. Always UTC timezone.",
+      "syntax": "date.toISOString()",
+      "parameters": [],
+      "returns": "string",
+      "examples": [
+        {
+          "title": "Format current time",
+          "code": "const now = new Date();\nconsole.log(now.toISOString()); // '2024-01-15T09:30:00.000Z'"
+        }
+      ],
+      "related": ["date.now", "date.constructor"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString",
+      "keywords": ["format", "ISO", "UTC", "timestamp", "serialize"]
+    },
+    {
+      "id": "regexp.test",
+      "name": "RegExp.test()",
+      "category": "RegExp",
+      "language": "JavaScript",
+      "description": "Executes a search for a match between a regular expression and a specified string. Returns true or false.",
+      "syntax": "regex.test(str)",
+      "parameters": [
+        { "name": "str", "type": "string", "description": "The string against which to match the regular expression.", "optional": false }
+      ],
+      "returns": "boolean",
+      "examples": [
+        {
+          "title": "Validate email format",
+          "code": "const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nconsole.log(emailRegex.test('user@example.com')); // true\nconsole.log(emailRegex.test('not-an-email'));       // false"
+        },
+        {
+          "title": "Check numeric string",
+          "code": "const isNumber = /^\\d+$/.test('12345');\nconsole.log(isNumber); // true"
+        }
+      ],
+      "related": ["regexp.exec", "string.match", "string.replace"],
+      "complexity": "O(n) average",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test",
+      "keywords": ["regex", "pattern", "validate", "check", "match", "test"]
+    },
+    {
+      "id": "error.constructor",
+      "name": "new Error()",
+      "category": "Error",
+      "language": "JavaScript",
+      "description": "Creates a new Error object. Errors capture a stack trace and are used with throw/try/catch for exception handling.",
+      "syntax": "new Error(message)\nnew Error(message, options)",
+      "parameters": [
+        { "name": "message", "type": "string", "description": "Human-readable description of the error.", "optional": true },
+        { "name": "options.cause", "type": "any", "description": "Error cause for error chaining.", "optional": true }
+      ],
+      "returns": "Error",
+      "examples": [
+        {
+          "title": "Throw and catch",
+          "code": "function divide(a, b) {\n  if (b === 0) throw new Error('Division by zero');\n  return a / b;\n}\ntry {\n  const result = divide(10, 0);\n} catch (err) {\n  console.error(err.message); // 'Division by zero'\n  console.error(err.stack);\n}"
+        },
+        {
+          "title": "Custom error types",
+          "code": "class ValidationError extends Error {\n  constructor(field, message) {\n    super(message);\n    this.name = 'ValidationError';\n    this.field = field;\n  }\n}\nthrow new ValidationError('email', 'Invalid email format');"
+        }
+      ],
+      "related": ["error.typeError", "error.rangeError"],
+      "complexity": "O(1)",
+      "docs": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+      "keywords": ["exception", "throw", "catch", "try", "stack", "error handling"]
+    }
+  ]
+}

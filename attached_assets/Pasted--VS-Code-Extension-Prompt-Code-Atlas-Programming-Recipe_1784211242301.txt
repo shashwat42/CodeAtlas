@@ -1,0 +1,646 @@
+# VS Code Extension Prompt – Code Atlas (Programming Recipe Book)
+
+## Objective
+
+Build a production-quality Visual Studio Code extension called **Code Atlas**.
+
+The goal is to create a **Minecraft Recipe Book / Creative Inventory for programming languages**.
+
+Instead of requiring developers to know what to search for, they should be able to visually browse every built-in language feature, standard library API, and framework API from a sidebar, inspect it, understand it, and insert working code into their editor.
+
+This should feel like exploring an encyclopedia rather than reading documentation.
+
+---
+
+# Core Philosophy
+
+Programming currently works like this:
+
+> "I need to know the name before I can search."
+
+Code Atlas should work like this:
+
+> "I know I need to work with arrays. Show me everything arrays can do."
+
+Everything should be discoverable.
+
+---
+
+# Primary Users
+
+* Students
+* Self-taught developers
+* Experienced developers learning a new language
+* Backend engineers
+* Full-stack engineers
+* Anyone exploring an unfamiliar API
+
+---
+
+# Supported Languages (Phase 1)
+
+Implement support for:
+
+* JavaScript
+* TypeScript
+* Node.js
+
+Design the architecture so additional languages can be added later:
+
+* Python
+* Go
+* Rust
+* Java
+* Kotlin
+* C#
+* PHP
+* C++
+* Swift
+
+without changing core code.
+
+---
+
+# UI
+
+The extension should add a new Activity Bar icon called:
+
+📚 Code Atlas
+
+Opening it reveals:
+
+```
+JavaScript
+    Arrays
+    Strings
+    Objects
+    Functions
+    Promise
+    Math
+    Date
+    JSON
+    Map
+    Set
+    WeakMap
+    WeakSet
+    RegExp
+    Symbol
+    Error
+
+TypeScript
+    Utility Types
+    Interfaces
+    Generics
+    Enums
+    Decorators
+    Modules
+    Namespaces
+
+Node.js
+    fs
+    path
+    crypto
+    stream
+    buffer
+    process
+    child_process
+    http
+    https
+    events
+    timers
+```
+
+Everything is expandable.
+
+---
+
+# Example Navigation
+
+```
+JavaScript
+
+→ Arrays
+
+    map()
+
+    filter()
+
+    reduce()
+
+    some()
+
+    every()
+
+    find()
+
+    findLast()
+
+    sort()
+
+    toSorted()
+
+    splice()
+
+    slice()
+
+    concat()
+
+    flat()
+
+    flatMap()
+
+    push()
+
+    pop()
+
+    shift()
+
+    unshift()
+
+    at()
+
+    with()
+```
+
+Clicking an item opens a documentation panel.
+
+---
+
+# Documentation Panel
+
+Display:
+
+Title
+
+Description
+
+Syntax
+
+Parameters
+
+Return Type
+
+Examples
+
+Common Use Cases
+
+Performance Notes
+
+Browser / Runtime Support
+
+Related APIs
+
+Common Mistakes
+
+Best Practices
+
+Links to Official Documentation
+
+Buttons
+
+* Insert Example
+* Copy Example
+* Open Official Docs
+
+---
+
+# Example
+
+Selecting
+
+```
+Array.map()
+```
+
+Shows
+
+```
+map()
+
+Description
+
+Creates a new array populated with the results of calling a provided callback function on every element.
+
+Syntax
+
+array.map(callback)
+
+Parameters
+
+callback
+
+currentValue
+
+index
+
+array
+
+Returns
+
+New Array
+
+Example
+
+const doubled = numbers.map(n => n * 2)
+
+Common Use Cases
+
+Transforming data
+
+Converting DTOs
+
+Formatting output
+
+Performance
+
+O(n)
+
+Related
+
+filter()
+
+reduce()
+
+flatMap()
+
+forEach()
+
+Insert Example
+
+Copy Example
+
+Open Docs
+```
+
+---
+
+# Search
+
+Global search bar.
+
+Searching:
+
+```
+map
+```
+
+Should instantly find:
+
+```
+Array.map()
+
+Map
+
+WeakMap
+
+SourceMap
+
+Map Constructor
+```
+
+Searching:
+
+```
+hash
+```
+
+Should show
+
+```
+crypto.createHash()
+
+bcrypt.hash()
+
+argon2.hash()
+```
+
+Searching:
+
+```
+file
+```
+
+Should return
+
+```
+fs.readFile()
+
+fs.writeFile()
+
+fs.open()
+
+Buffer
+
+Streams
+```
+
+Search must support fuzzy matching.
+
+---
+
+# Insert into Editor
+
+Every documentation page should include an Insert button.
+
+Clicking it inserts the selected example at the current cursor position.
+
+---
+
+# Related APIs
+
+Every item contains relationships.
+
+Example
+
+```
+map()
+
+Related
+
+filter()
+
+reduce()
+
+flatMap()
+
+forEach()
+
+Promise.all()
+```
+
+Navigation should feel like browsing Wikipedia.
+
+---
+
+# Favorites
+
+Allow users to star APIs.
+
+Create
+
+```
+⭐ Favorites
+```
+
+section.
+
+Persist across VS Code sessions.
+
+---
+
+# Recently Viewed
+
+Keep history.
+
+```
+Recent
+
+Array.map()
+
+Promise.all()
+
+crypto.createHash()
+
+fs.readFile()
+```
+
+---
+
+# Example Playground
+
+Optional panel.
+
+User can edit example code.
+
+Execute locally (where safe) or simply preview syntax-highlighted examples.
+
+---
+
+# Documentation Source
+
+Primary sources:
+
+* MDN
+* TypeScript Handbook
+* Node.js Official Documentation
+
+Create a documentation ingestion layer.
+
+The UI must never depend directly on documentation websites.
+
+Instead:
+
+```
+Official Docs
+
+↓
+
+Parser
+
+↓
+
+Normalized JSON
+
+↓
+
+Extension UI
+```
+
+Future updates should only require refreshing the JSON dataset.
+
+---
+
+# Data Model
+
+Each API should have something like
+
+```json
+{
+  "id": "array.map",
+  "name": "map",
+  "category": "Array",
+  "language": "JavaScript",
+  "description": "...",
+  "syntax": "...",
+  "parameters": [],
+  "returns": "...",
+  "examples": [],
+  "related": [],
+  "complexity": "O(n)",
+  "docs": "https://...",
+  "keywords": []
+}
+```
+
+---
+
+# Extension Architecture
+
+Use
+
+TypeScript
+
+VS Code Extension API
+
+Recommended structure
+
+```
+src/
+
+extension.ts
+
+views/
+
+tree/
+
+search/
+
+webview/
+
+commands/
+
+services/
+
+models/
+
+storage/
+
+docs/
+
+assets/
+
+generated/
+
+```
+
+Keep the architecture modular.
+
+No giant files.
+
+---
+
+# Features
+
+Implement
+
+✅ Sidebar Tree View
+
+✅ Webview Documentation
+
+✅ Search
+
+✅ Favorites
+
+✅ Recently Viewed
+
+✅ Related APIs
+
+✅ Insert Example
+
+✅ Copy Example
+
+✅ Official Documentation Link
+
+✅ Offline JSON Database
+
+---
+
+# Nice-to-Have Features
+
+Dark/Light themes
+
+Keyboard navigation
+
+Breadcrumbs
+
+Collapsible examples
+
+Multiple code examples
+
+Language-specific snippets
+
+Copy Markdown documentation
+
+Export examples
+
+Tag system
+
+Difficulty level
+
+"See also"
+
+API popularity indicator
+
+Deprecation badges
+
+Version compatibility
+
+---
+
+# Future Roadmap
+
+Design the architecture so these can be added later without major refactoring:
+
+* Python Standard Library
+* Rust std
+* Go stdlib
+* Java SDK
+* React
+* Express
+* NestJS
+* Prisma
+* Docker
+* Kubernetes
+* PostgreSQL
+* Linux Commands
+* Git
+* Redis
+* GraphQL
+* AWS SDK
+* Azure SDK
+* GCP SDK
+
+Each should appear as another browseable library.
+
+---
+
+# UX Goals
+
+The experience should feel like:
+
+* Minecraft Recipe Book
+* IntelliJ documentation
+* Dash/Zeal docsets
+* VS Code Explorer
+* Obsidian graph navigation
+
+combined into one seamless developer experience.
+
+The interface should encourage exploration instead of requiring prior knowledge.
+
+---
+
+# Code Quality
+
+* Strict TypeScript
+* ESLint
+* Prettier
+* Modular architecture
+* SOLID principles where appropriate
+* No duplicated logic
+* Strong typing
+* Reusable components
+* Clean separation between UI, storage, commands, parsing, and data models
+
+---
+
+# Deliverables
+
+1. A fully functional VS Code extension.
+2. Production-ready project structure.
+3. Comprehensive README with installation, architecture, and contribution guide.
+4. Sample offline dataset for JavaScript, TypeScript, and Node.js.
+5. Build and packaging scripts (`vsce` compatible).
+6. Unit tests for core services where practical.
+
+The extension should prioritize **discoverability**, **offline usability**, **speed**, and **extensibility**, making it a true "programming recipe book" rather than just another documentation viewer.
