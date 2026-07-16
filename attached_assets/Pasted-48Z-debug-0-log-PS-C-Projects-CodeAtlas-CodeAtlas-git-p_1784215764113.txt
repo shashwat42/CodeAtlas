@@ -1,0 +1,52 @@
+48Z-debug-0.log
+PS C:\Projects\CodeAtlas\CodeAtlas> git pull
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 5 (delta 3), reused 5 (delta 3), pack-reused 0 (from 0)
+Unpacking objects: 100% (5/5), 515 bytes | 9.00 KiB/s, done.
+From https://github.com/shashwat42/CodeAtlas
+   5ccbfba..0511387  main       -> origin/main
+Updating 5ccbfba..0511387
+Fast-forward
+ artifacts/code-atlas-extension/package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+PS C:\Projects\CodeAtlas\CodeAtlas> ls
+
+
+    Directory: C:\Projects\CodeAtlas\CodeAtlas
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        16-07-2026     20:52                .agents
+d-----        16-07-2026     20:52                artifacts
+d-----        16-07-2026     20:52                attached_assets
+d-----        16-07-2026     20:52                lib
+d-----        16-07-2026     20:53                node_modules
+d-----        16-07-2026     20:52                scripts
+-a----        16-07-2026     20:52            717 .gitignore
+-a----        16-07-2026     20:52             58 .npmrc
+-a----        16-07-2026     20:52            343 .replit
+-a----        16-07-2026     20:52            206 .replitignore
+-a----        16-07-2026     20:54           1721 package-lock.json
+-a----        16-07-2026     20:52            668 package.json
+-a----        16-07-2026     20:52         203831 pnpm-lock.yaml
+-a----        16-07-2026     20:52           6739 pnpm-workspace.yaml
+-a----        16-07-2026     20:52           1566 replit.md
+-a----        16-07-2026     20:52            718 tsconfig.base.json
+-a----        16-07-2026     20:52            252 tsconfig.json
+
+
+PS C:\Projects\CodeAtlas\CodeAtlas> npm run install
+npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm error Missing script: "install"
+npm error
+npm error Did you mean this?
+npm error   npm uninstall # Remove a package
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: C:\Users\Shash\AppData\Local\npm-cache\_logs\2026-07-16T15_29_14_377Z-debug-0.log
+PS C:\Projects\CodeAtlas\CodeAtlas>
